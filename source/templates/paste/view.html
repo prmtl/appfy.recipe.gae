@@ -1,0 +1,46 @@
+{% extends 'paste/base.html' %}
+
+{% block title %}{% trans paste_id=paste.id %}Paste #{{ paste_id }}{% endtrans %} - {{ sitename }}{% endblock %}
+
+{% block content %}
+    <h1>{% trans paste_id=paste.id %}Paste #{{ paste_id }}{% endtrans %}</h1>
+
+    <div class="paste-tools">
+        <p>
+            {# <a href="" class="icon download">{{ _('Download') }}</a> - #}
+            {% trans count=paste.lines, language=paste.language_name %}
+                {{ language }}, {{ count }} line
+            {% pluralize %}
+                {{ language }}, {{ count }} lines
+            {% endtrans %}
+        </p>
+    </div>
+
+    {{ paste.code }}
+
+    {#<div class="input_wrapper">
+        <textarea id="code-textarea" class="textarea large">{{ paste.code_raw|e }}</textarea>
+    </div>#}
+
+    <form method="post" action="{{ url_for('paste/new', area_name=area.name) }}">
+        {% from 'base/macros.html' import form_field %}
+        <fieldset>
+            <div class="input_wrapper">
+                {{ form_field(form.code, class='large') }}
+            </div>
+            {{ form_field(form.language) }}
+            {# form_field(form.tab) #}
+        </fieldset>
+        <input type="submit" name="submit" value="{{ _('Save New Paste') }}" class="submit">
+    </form>
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'paste/_sidebar.html' %}
+{% endblock %}
+
+{% block body_extra %}
+    {{ super() }}
+    <script type="text/javascript">
+    </script>
+{% endblock %}
