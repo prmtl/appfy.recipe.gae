@@ -16,10 +16,10 @@ setup(
     license='BSD',
     packages=find_packages(),
     install_requires=[
-        'setuptools',
-        'zc.buildout',
-        'zc.recipe.egg',
-        'hexagonit.recipe.download',
+        'setuptools >= 0.6c11',
+        'zc.buildout >= 1.4.3',
+        'zc.recipe.egg >= 1.2.2',
+        'hexagonit.recipe.download >= 1.4.1',
     ],
     entry_points={
         'zc.buildout': [
