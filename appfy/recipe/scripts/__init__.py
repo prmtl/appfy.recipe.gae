@@ -87,7 +87,7 @@ def get_config(filename, section=None, key=None):
 
 
 def get_dev_appserver_config(config_file):
-    config = get_config(config_file, 'gae_sdk', 'dev_appserver')
+    config = get_config(config_file, 'dev_appserver', 'defaults')
     if config:
         # Accept single line or multi-line configuration.
         config = ' '.join([o for o in config.split('\n') if o.strip()])

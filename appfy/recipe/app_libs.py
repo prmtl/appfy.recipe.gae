@@ -3,8 +3,9 @@ Options
 =======
 eggs:
 lib-directory:
+use-zipimport:
 lib-zip:
-ignore-patterns:
+ignore-globs:
 primary-lib-directory:
 delete-safe: Checks directory destination before deleting. It will require
     manual deletion if the checksum from the last build differs. Default to
@@ -50,14 +51,14 @@ class Recipe(zc.recipe.egg.Scripts):
         if not os.path.isabs(self.lib_dir):
             self.lib_dir = os.path.abspath(self.lib_dir)
 
-        self.lib_zip = opts.get('lib-zip', None)
-        if self.lib_zip and not os.path.isabs(self.lib_zip):
-            self.lib_zip = os.path.abspath(self.lib_zip)
+        self.use_zip = opts.get('use-zipimport', 'false') == 'true'
+        if self.use_zip:
+            self.lib_dir += '.zip'
 
         self.primary_lib_dir = opts.get('primary-lib-directory', 'lib')
 
         # Set list of patterns to be ignored.
-        self.ignore = [i for i in opts.get('ignore-patterns', '') \
+        self.ignore = [i for i in opts.get('ignore-globs', '') \
             .split('\n') if i.strip()]
 
         # Unused for now. All deletion is safe.
@@ -97,12 +98,12 @@ class Recipe(zc.recipe.egg.Scripts):
 
             # Delete old libs and move the new ones.
             self.delete_libs()
-            if self.lib_zip:
-                shutil.copyfile(tmp_zip, self.lib_zip)
-                self.logger.info('Copied libraries %r.' % self.lib_zip)
+            if self.use_zip:
+                shutil.copyfile(tmp_zip, self.lib_dir)
             else:
                 copytree(tmp_dir, self.lib_dir)
-                self.logger.info('Copied libraries %r.' % self.lib_dir)
+
+            self.logger.info('Copied libraries %r.' % self.lib_dir)
 
             # Save current checksum.
             self.save_checksum(checksum)
@@ -139,35 +140,30 @@ class Recipe(zc.recipe.egg.Scripts):
         return pkgs
 
     def delete_libs(self):
-        if self.lib_zip:
-            lib = self.lib_zip
-        else:
-            lib = self.lib_dir
-
-        if not os.path.exists(lib):
+        if not os.path.exists(self.lib_dir):
             # Nothing to delete, so it is safe.
             return
 
         if self.delete_safe is True:
             msg = "Please delete the libraries manually and try again: %r." \
                 "\nAlternatively you can set 'delete-safe = false' in " \
-                "buildout.cfg to never check for changes." % lib
+                "buildout.cfg to never check for changes." % self.lib_dir
 
             # Compare saved and current checksums.
             old_checksum = self.get_old_checksum()
             if old_checksum is None:
                 raise IOError("Missing checksum for the libraries. " + msg)
-            elif old_checksum != self.get_new_checksum(lib):
+            elif old_checksum != self.get_new_checksum(self.lib_dir):
                 raise IOError("The checksum for the libraries didn't match. "
                     + msg)
 
-        if self.lib_zip:
-            os.remove(lib)
-            self.logger.info('Removed lib-zip %r.' % lib)
+        if self.use_zip:
+            os.remove(self.lib_dir)
+            self.logger.info('Removed lib-zip %r.' % self.lib_dir)
         else:
             # Delete the directory.
-            shutil.rmtree(lib)
-            self.logger.info('Removed lib-directory %r.' % lib)
+            shutil.rmtree(self.lib_dir)
+            self.logger.info('Removed lib-directory %r.' % self.lib_dir)
 
     def get_old_checksum(self):
         if os.path.isfile(self.checksum_file):

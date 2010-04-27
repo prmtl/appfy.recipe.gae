@@ -62,13 +62,16 @@ def copytree(src, dst, symlinks=False, ignore=None):
     else:
         ignored_names = set()
 
+    if dst in ignored_names:
+        return
+
     os.makedirs(dst)
     errors = []
     for name in names:
-        if name in ignored_names:
-            continue
         srcname = os.path.join(src, name)
         dstname = os.path.join(dst, name)
+        if srcname in ignored_names:
+            continue
         try:
             if symlinks and os.path.islink(srcname):
                 linkto = os.readlink(srcname)
@@ -82,7 +85,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
             errors.append((srcname, dstname, str(why)))
         # catch the Error from the recursive copytree so that we can
         # continue with other files
-        except Error, err:
+        except shutil.Error, err:
             errors.extend(err.args[0])
     try:
         shutil.copystat(src, dst)
@@ -93,7 +96,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
         else:
             errors.extend((src, dst, str(why)))
     if errors:
-        raise Error, errors
+        raise shutil.Error, errors
 
 
 def ignore_patterns(*patterns):
@@ -105,9 +108,11 @@ def ignore_patterns(*patterns):
     This comes from Python 2.6 source.
     """
     def _ignore_patterns(path, names):
+        names = [os.path.join(path, name) for name in names]
         ignored_names = []
         for pattern in patterns:
             ignored_names.extend(fnmatch.filter(names, pattern))
+
         return set(ignored_names)
     return _ignore_patterns
 
@@ -128,9 +133,3 @@ def zipdir(dirname, filename):
     finally:
         if z:
             z.close()
-
-
-# Imported here to avoid recursion.
-#from appfy.recipe.sdk_scripts import SdkScripts
-#from appfy.recipe.app_libraries import AppLibraries
-#from appfy.recipe.install_sdk import InstallAppEngineSdk
