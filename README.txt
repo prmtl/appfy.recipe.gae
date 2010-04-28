@@ -7,11 +7,11 @@ Engine development. It is inspired by
 but with support for a more natural layout and functionalities split in
 different recipes. Currently `appfy.recipe.gae` has 3 recipes:
 
-- `appfy.recipe.gae:sdk`: Downloads and installs the App Engine SDK.
-- `appfy.recipe.gae:tools`: Installs appcfg, dev_appserver and python
-  executables.
-- `appfy.recipe.gae:app_lib`: Downloads packages from PyPi and installs in
-  the app directory.
+:appfy.recipe.gae\:sdk: Downloads and installs the App Engine SDK.
+:appfy.recipe.gae\:tools: Installs appcfg, dev_appserver and python
+    executables.
+:appfy.recipe.gae\:app_lib: Downloads packages from PyPi and installs in
+    the app directory.
 
 Source code and issue tracker can be found at `http://code.google.com/p/appfy/ <http://code.google.com/p/appfy/>`_.
 
@@ -25,16 +25,16 @@ the options from that recipe are also valid.
 Options
 ~~~~~~~
 
-- `eggs`: package names to be installed.
-- `lib-directory`: the destination directory for the libaries. Default is
+:eggs: package names to be installed.
+:lib-directory: the destination directory for the libaries. Default is
   `distlib`.
-- `primary-lib-directory`: The main directory used for libraries. This is
+:primary-lib-directory: The main directory used for libraries. This is
   only used to create a README.txt inside `lib-directory` with a warning.
-- `use-zipimport`: If `true`, a zip file with the libraries is created
+:use-zipimport: If `true`, a zip file with the libraries is created
   instead of a directory. The zip file will use the value of
   `lib-directory` for the filename, plus `.zip`.
-- `ignore-globs`: a list of glob patterns to not be copied from the library.
-- `delete-safe`: Checks the checksum of the destination directory before
+:ignore-globs: a list of glob patterns to not be copied from the library.
+:delete-safe: Checks the checksum of the destination directory before
   deleting. It will require manual deletion if the checksum from the last
   build differs. Default to true.
 
@@ -81,10 +81,10 @@ so all the download options from that recipe are also valid.
 Options
 ~~~~~~~
 
-- `destination`: destination of the extracted SDK download. Default is
-  `${buildout:parts-directory}/google_appengine`.
-- `clear-destination`: if `true`, deletes the destination dir before
-  extracting the download. Default is `false`.
+:destination: destination of the extracted SDK download. Default is
+    `${buildout:parts-directory}/google_appengine`.
+:clear-destination: if `true`, deletes the destination dir before
+    extracting the download. Default is `false`.
 
 Example
 ~~~~~~~
@@ -113,13 +113,13 @@ so all the options from that recipe are also valid.
 Options
 ~~~~~~~
 
-- `sdk-directory`: path to the App Engine SDK directory. It can be an
-  absolute path or a reference to the `appfy.recipe.gae:sdk` destination
-  option. Default is `${buildout:parts-directory}/google_appengine`.
-- `dev_appserver-script`: path to the dev_appserver script. Default is
-  `${buildout:bin-directory}/dev_appserver`.
-- `appcfg-script`: path to the appcfg script. Default is
-  `${buildout:bin-directory}/appcfg`.
+:sdk-directory: path to the App Engine SDK directory. It can be an
+    absolute path or a reference to the `appfy.recipe.gae:sdk` destination
+    option. Default is `${buildout:parts-directory}/google_appengine`.
+:dev_appserver-script: path to the dev_appserver script. Default is
+    `${buildout:bin-directory}/dev_appserver`.
+:appcfg-script: path to the appcfg script. Default is
+    `${buildout:bin-directory}/appcfg`.
 
 
 Example

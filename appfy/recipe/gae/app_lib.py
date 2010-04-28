@@ -8,16 +8,16 @@ the options from that recipe are also valid.
 Options
 ~~~~~~~
 
-- `eggs`: package names to be installed.
-- `lib-directory`: the destination directory for the libaries. Default is
+:eggs: package names to be installed.
+:lib-directory: the destination directory for the libaries. Default is
   `distlib`.
-- `primary-lib-directory`: The main directory used for libraries. This is
+:primary-lib-directory: The main directory used for libraries. This is
   only used to create a README.txt inside `lib-directory` with a warning.
-- `use-zipimport`: If `true`, a zip file with the libraries is created
+:use-zipimport: If `true`, a zip file with the libraries is created
   instead of a directory. The zip file will use the value of
   `lib-directory` for the filename, plus `.zip`.
-- `ignore-globs`: a list of glob patterns to not be copied from the library.
-- `delete-safe`: Checks the checksum of the destination directory before
+:ignore-globs: a list of glob patterns to not be copied from the library.
+:delete-safe: Checks the checksum of the destination directory before
   deleting. It will require manual deletion if the checksum from the last
   build differs. Default to true.
 

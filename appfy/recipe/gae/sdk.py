@@ -9,10 +9,10 @@ so all the download options from that recipe are also valid.
 Options
 ~~~~~~~
 
-- `destination`: destination of the extracted SDK download. Default is
-  `${buildout:parts-directory}/google_appengine`.
-- `clear-destination`: if `true`, deletes the destination dir before
-  extracting the download. Default is `false`.
+:destination: destination of the extracted SDK download. Default is
+    `${buildout:parts-directory}/google_appengine`.
+:clear-destination: if `true`, deletes the destination dir before
+    extracting the download. Default is `false`.
 
 Example
 ~~~~~~~

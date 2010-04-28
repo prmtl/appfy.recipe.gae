@@ -8,11 +8,11 @@ Engine development. It is inspired by
 but with support for a more natural layout and functionalities split in
 different recipes. Currently `appfy.recipe.gae` has 3 recipes:
 
-- `appfy.recipe.gae:sdk`: Downloads and installs the App Engine SDK.
-- `appfy.recipe.gae:tools`: Installs appcfg, dev_appserver and python
-  executables.
-- `appfy.recipe.gae:app_lib`: Downloads packages from PyPi and installs in
-  the app directory.
+:appfy.recipe.gae\:sdk: Downloads and installs the App Engine SDK.
+:appfy.recipe.gae\:tools: Installs appcfg, dev_appserver and python
+    executables.
+:appfy.recipe.gae\:app_lib: Downloads packages from PyPi and installs in
+    the app directory.
 
 Source code and issue tracker can be found at `http://code.google.com/p/appfy/ <http://code.google.com/p/appfy/>`_.
 """

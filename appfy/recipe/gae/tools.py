@@ -11,13 +11,13 @@ so all the options from that recipe are also valid.
 Options
 ~~~~~~~
 
-- `sdk-directory`: path to the App Engine SDK directory. It can be an
-  absolute path or a reference to the `appfy.recipe.gae:sdk` destination
-  option. Default is `${buildout:parts-directory}/google_appengine`.
-- `dev_appserver-script`: path to the dev_appserver script. Default is
-  `${buildout:bin-directory}/dev_appserver`.
-- `appcfg-script`: path to the appcfg script. Default is
-  `${buildout:bin-directory}/appcfg`.
+:sdk-directory: path to the App Engine SDK directory. It can be an
+    absolute path or a reference to the `appfy.recipe.gae:sdk` destination
+    option. Default is `${buildout:parts-directory}/google_appengine`.
+:dev_appserver-script: path to the dev_appserver script. Default is
+    `${buildout:bin-directory}/dev_appserver`.
+:appcfg-script: path to the appcfg script. Default is
+    `${buildout:bin-directory}/appcfg`.
 
 
 Example
