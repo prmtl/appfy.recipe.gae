@@ -5,7 +5,7 @@ appfy.recipe.gae:tools
 Installs appcfg, dev_appserver and python executables in the buildout
 directory. It also allows to set default values to start the dev_appserver.
 
-This recipe extends `zc.recipe.egg_ <http://pypi.python.org/pypi/zc.recipe.egg>`
+This recipe extends `zc.recipe.egg_ <http://pypi.python.org/pypi/zc.recipe.egg>`_
 so all the options from that recipe are also valid.
 
 Options

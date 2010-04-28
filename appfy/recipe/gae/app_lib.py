@@ -2,7 +2,7 @@
 appfy.recipe.gae:app_lib
 ------------------------
 Downloads packages from PyPi and installs in the app directory. This recipe
-extends `zc.recipe.egg_ <http://pypi.python.org/pypi/zc.recipe.egg>` so all
+extends `zc.recipe.egg_ <http://pypi.python.org/pypi/zc.recipe.egg>`_ so all
 the options from that recipe are also valid.
 
 Options

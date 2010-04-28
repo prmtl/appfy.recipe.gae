@@ -20,7 +20,7 @@ Source code and issue tracker can be found at `http://code.google.com/p/appfy/
 appfy.recipe.gae:app_lib
 ------------------------
 Downloads packages from PyPi and installs in the app directory. This recipe
-extends `zc.recipe.egg_ <http://pypi.python.org/pypi/zc.recipe.egg>` so all
+extends `zc.recipe.egg_ <http://pypi.python.org/pypi/zc.recipe.egg>`_ so all
 the options from that recipe are also valid.
 
 Options
@@ -104,7 +104,7 @@ appfy.recipe.gae:tools
 Installs appcfg, dev_appserver and python executables in the buildout
 directory. It also allows to set default values to start the dev_appserver.
 
-This recipe extends `zc.recipe.egg_ <http://pypi.python.org/pypi/zc.recipe.egg>`
+This recipe extends `zc.recipe.egg_ <http://pypi.python.org/pypi/zc.recipe.egg>`_
 so all the options from that recipe are also valid.
 
 Options
