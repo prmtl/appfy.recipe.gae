@@ -2,20 +2,19 @@
 appfy.recipe.gae
 ================
 
-``appfy.recipe.gae`` provides a series of zc.buildout recipes to help App
+`appfy.recipe.gae` provides a series of zc.buildout recipes to help App
 Engine development. It is inspired by
 `rod.recipe.appengine <http://pypi.python.org/pypi/rod.recipe.appengine>`_,
 but with support for a more natural layout and functionalities split in
-different recipes. Currently ``appfy.recipe.gae`` has 3 recipes:
+different recipes. Currently `appfy.recipe.gae` has 3 recipes:
 
-- ``appfy.recipe.gae:sdk``: Downloads and installs the App Engine SDK.
-- ``appfy.recipe.gae:tools``: Installs appcfg, dev_appserver and python
+- `appfy.recipe.gae:sdk`: Downloads and installs the App Engine SDK.
+- `appfy.recipe.gae:tools`: Installs appcfg, dev_appserver and python
   executables.
-- ``appfy.recipe.gae:app_lib``: Downloads packages from PyPi and installs in
+- `appfy.recipe.gae:app_lib`: Downloads packages from PyPi and installs in
   the app directory.
 
-Source code and issue tracker can be found at `http://code.google.com/p/appfy/
-<http://code.google.com/p/appfy/>`_.
+Source code and issue tracker can be found at `http://code.google.com/p/appfy/ <http://code.google.com/p/appfy/>`_.
 """
 import os
 from setuptools import setup, find_packages

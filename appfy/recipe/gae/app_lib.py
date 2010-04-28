@@ -2,54 +2,56 @@
 appfy.recipe.gae:app_lib
 ------------------------
 Downloads packages from PyPi and installs in the app directory. This recipe
-extends `zc.recipe.egg_ <http://pypi.python.org/pypi/zc.recipe.egg>`_ so all
+extends `zc.recipe.egg <http://pypi.python.org/pypi/zc.recipe.egg>`_ so all
 the options from that recipe are also valid.
 
 Options
 ~~~~~~~
 
-- ``eggs``: package names to be installed.
-- ``lib-directory``: the destination directory for the libaries. Default is
-  ``distlib``.
-- ``primary-lib-directory``: The main directory used for libraries. This is
-  only used to create a README.txt inside ``lib-directory`` with a warning.
-- ``use-zipimport``: If ``true``, a zip file with the libraries is created
+- `eggs`: package names to be installed.
+- `lib-directory`: the destination directory for the libaries. Default is
+  `distlib`.
+- `primary-lib-directory`: The main directory used for libraries. This is
+  only used to create a README.txt inside `lib-directory` with a warning.
+- `use-zipimport`: If `true`, a zip file with the libraries is created
   instead of a directory. The zip file will use the value of
-  ``lib-directory`` for the filename, plus ``.zip``.
-- ``ignore-globs``: a list of glob patterns to not be copied from the library.
-- ``delete-safe``: Checks the checksum of the destination directory before
+  `lib-directory` for the filename, plus `.zip`.
+- `ignore-globs`: a list of glob patterns to not be copied from the library.
+- `delete-safe`: Checks the checksum of the destination directory before
   deleting. It will require manual deletion if the checksum from the last
   build differs. Default to true.
 
 Example
 ~~~~~~~
 
-    [app_lib]
-    # Sets the library dependencies for the app.
-    recipe = appfy.recipe.gae:app_lib
-    lib-directory = app/distlib
-    use-zipimport = false
+::
 
-    # Define the libraries.
-    eggs =
-        babel
-        jinja2
-        wtforms
-        werkzeug
-        gaepytz
-        gaema
-        tipfy
+  [app_lib]
+  # Sets the library dependencies for the app.
+  recipe = appfy.recipe.gae:app_lib
+  lib-directory = app/distlib
+  use-zipimport = false
 
-    # Don't copy files that match these glob patterns.
-    ignore-globs =
-        *.c
-        *.pyc
-        *.pyo
-        */test
-        */tests
-        */testsuite
-        */django
-        */sqlalchemy
+  # Define the libraries.
+  eggs =
+      babel
+      jinja2
+      wtforms
+      werkzeug
+      gaepytz
+      gaema
+      tipfy
+
+  # Don't copy files that match these glob patterns.
+  ignore-globs =
+      *.c
+      *.pyc
+      *.pyo
+      */test
+      */tests
+      */testsuite
+      */django
+      */sqlalchemy
 """
 import hashlib
 import logging

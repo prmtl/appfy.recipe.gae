@@ -5,43 +5,45 @@ appfy.recipe.gae:tools
 Installs appcfg, dev_appserver and python executables in the buildout
 directory. It also allows to set default values to start the dev_appserver.
 
-This recipe extends `zc.recipe.egg_ <http://pypi.python.org/pypi/zc.recipe.egg>`_
+This recipe extends `zc.recipe.egg <http://pypi.python.org/pypi/zc.recipe.egg>`_
 so all the options from that recipe are also valid.
 
 Options
 ~~~~~~~
 
-- ``sdk-directory``: path to the App Engine SDK directory. It can be an
-  absolute path or a reference to the ``appfy.recipe.gae:sdk`` destination
-  option. Default is ``${buildout:parts-directory}/google_appengine``.
-- ``dev_appserver-script``: path to the dev_appserver script. Default is
-  ``${buildout:bin-directory}/dev_appserver``.
-- ``appcfg-script``: path to the appcfg script. Default is
-  ``${buildout:bin-directory}/appcfg``.
+- `sdk-directory`: path to the App Engine SDK directory. It can be an
+  absolute path or a reference to the `appfy.recipe.gae:sdk` destination
+  option. Default is `${buildout:parts-directory}/google_appengine`.
+- `dev_appserver-script`: path to the dev_appserver script. Default is
+  `${buildout:bin-directory}/dev_appserver`.
+- `appcfg-script`: path to the appcfg script. Default is
+  `${buildout:bin-directory}/appcfg`.
+
 
 Example
 ~~~~~~~
 
-    [gae_tools]
-    # Installs appcfg, dev_appserver and python executables in the bin directory.
-    recipe = appfy.recipe.gae:tools
-    sdk-directory = ${gae_sdk:destination}
+::
 
-Note that this example references an ``gae_sdk`` section from the
-``appfy.recipe.gae:sdk`` example. An absolute path could also be used.
+  [gae_tools]
+  # Installs appcfg, dev_appserver and python executables in the bin directory.
+  recipe = appfy.recipe.gae:tools
+  sdk-directory = ${gae_sdk:destination}
+
+
+Note that this example references an `gae_sdk` section from the
+`appfy.recipe.gae:sdk` example. An absolute path could also be used.
 
 To set default values to start the dev_appserver, create a section
-``dev_appserver`` in buildout.cfg. For example:
+`dev_appserver` in buildout.cfg. For example:
 
-    [dev_appserver]
-    # Set default values to start the dev_appserver. All options from the command
-    # line are allowed. They are inserted at the beginning of the arguments.
-    # Values are used as they are; don't use variables here.
-    defaults =
-        --datastore_path=var
-        --history_path=var
-        --blobstore_path=var
-        app
+::
+
+  [dev_appserver]
+  # Set default values to start the dev_appserver. All options from the
+  # command line are allowed. They are inserted at the beginning of the
+  # arguments. Values are used as they are; don't use variables here.
+  defaults = --datastore_path=var --history_path=var --blobstore_path=var app
 
 
 These options can be set in a single line as well. If an option is provided

@@ -9,22 +9,24 @@ so all the download options from that recipe are also valid.
 Options
 ~~~~~~~
 
-- ``destination``: destination of the extracted SDK download. Default is
-  ``${buildout:parts-directory}/google_appengine``.
-- ``clear-destination``: if ``true``, deletes the destination dir before
-  extracting the download. Default is ``false``.
+- `destination`: destination of the extracted SDK download. Default is
+  `${buildout:parts-directory}/google_appengine`.
+- `clear-destination`: if `true`, deletes the destination dir before
+  extracting the download. Default is `false`.
 
 Example
 ~~~~~~~
 
-    [gae_sdk]
-    # Dowloads and extracts the App Engine SDK.
-    recipe = appfy.recipe.gae:sdk
-    url = http://googleappengine.googlecode.com/files/google_appengine_1.3.3.zip
-    destination = ${buildout:parts-directory}/google_appengine
-    strip-top-level-dir = true
-    hash-name = false
-    clear-destination = true
+::
+
+  [gae_sdk]
+  # Dowloads and extracts the App Engine SDK.
+  recipe = appfy.recipe.gae:sdk
+  url = http://googleappengine.googlecode.com/files/google_appengine_1.3.3.zip
+  destination = ${buildout:parts-directory}/google_appengine
+  strip-top-level-dir = true
+  hash-name = false
+  clear-destination = true
 """
 import logging
 import os
