@@ -44,7 +44,6 @@ class Recipe(zc.recipe.egg.Scripts):
         opts.setdefault('extra-paths', '')
         opts.setdefault('eggs', '')
         opts['extra-paths'] += '\n%s\n%s' % (BASE, self.sdk_dir)
-        #opts['extra-paths'] += '\n%s' % (BASE,)
 
         self.use_rel_paths = opts.get('relative-paths',
             buildout['buildout'].get('relative-paths', 'false')) == 'true'
@@ -54,15 +53,11 @@ class Recipe(zc.recipe.egg.Scripts):
     def install(self):
         """Creates the scripts."""
         scripts = 'appfy.recipe.scripts'
-        sdk_dir = self.get_path(self.sdk_dir)
-
-        entry_points = '%s=%s:appcfg %s=%s:dev_appserver' % (
-            self.appcfg_script, scripts, self.server_script, scripts)
 
         self.options.update({
             'entry-points':   '%s=%s:appcfg %s=%s:dev_appserver' % (
                 self.appcfg_script, scripts, self.server_script, scripts),
-            'initialization': 'gae = %s' % sdk_dir,
+            'initialization': 'gae = %s' % self.get_path(self.sdk_dir),
             'arguments':      'base, gae',
         })
 

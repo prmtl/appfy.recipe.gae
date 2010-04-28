@@ -50,7 +50,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
 
     XXX Consider this example code rather than the ultimate tool.
 
-    This comes from Python 2.6 source.
+    Adapted from Python 2.6 source.
     """
     if os.path.isfile(src):
         shutil.copyfile(src, dst)
@@ -105,7 +105,7 @@ def ignore_patterns(*patterns):
     Patterns is a sequence of glob-style patterns
     that are used to exclude files
 
-    This comes from Python 2.6 source.
+    Adapted from Python 2.6 source.
     """
     def _ignore_patterns(path, names):
         names = [os.path.join(path, name) for name in names]
@@ -116,6 +116,24 @@ def ignore_patterns(*patterns):
         return set(ignored_names)
     return _ignore_patterns
 
+
+def rmfiles(src, only=None):
+    names = os.listdir(src)
+
+    if only is not None:
+        only_names = only(src, names)
+    else:
+        only_names = set()
+
+    for name in names:
+        srcname = os.path.join(src, name)
+        if srcname in only_names:
+            if os.path.isfile(srcname):
+                os.remove(srcname)
+            elif os.path.isdir(srcname):
+                shutil.rmtree(srcname)
+        elif os.path.isdir(srcname):
+            rmfiles(srcname, only=only)
 
 
 def zipdir(dirname, filename):

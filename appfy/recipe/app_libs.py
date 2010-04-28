@@ -4,7 +4,6 @@ Options
 eggs:
 lib-directory:
 use-zipimport:
-lib-zip:
 ignore-globs:
 primary-lib-directory:
 delete-safe: Checks directory destination before deleting. It will require
@@ -20,7 +19,7 @@ import tempfile
 import uuid
 import zc.recipe.egg
 
-from appfy.recipe import copytree, ignore_patterns, zipdir
+from appfy.recipe import copytree, ignore_patterns, rmfiles, zipdir
 
 
 BASE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
@@ -67,9 +66,8 @@ class Recipe(zc.recipe.egg.Scripts):
         super(Recipe, self).__init__(buildout, name, opts)
 
     def install(self):
+        # Get all installed packages.
         reqs, ws = self.working_set()
-
-        # Get all packages.
         paths = self.get_package_paths(ws)
 
         # Create temporary directory and zip names.
@@ -85,6 +83,7 @@ class Recipe(zc.recipe.egg.Scripts):
             os.mkdir(tmp_dir)
             for name, src in paths:
                 dst = os.path.join(tmp_dir, name)
+                self.logger.info('Copying %r...' % name)
                 copytree(src, dst, ignore=ignore_patterns(*self.ignore))
 
             # Save README.
@@ -92,7 +91,7 @@ class Recipe(zc.recipe.egg.Scripts):
             f.write(LIB_README % {'lib_dir': self.primary_lib_dir})
             f.close()
 
-            # Zip temporary directory to a temporary zip and create checksum.
+            # Zip temporary directory and create checksum.
             zipdir(tmp_dir, tmp_zip)
             checksum = self.calculate_checksum(tmp_zip)
 
@@ -175,6 +174,8 @@ class Recipe(zc.recipe.egg.Scripts):
 
     def get_new_checksum(self, filename):
         if os.path.isdir(filename):
+            # Remove *.pyc files to match the old checksum.
+            rmfiles(self.lib_dir, only=ignore_patterns('*.pyc'))
             # Zip first, then calculate checksum.
             id = uuid.uuid4().hex
             tmp_zip = os.path.join(tempfile.tempdir, 'TMP_%s.zip' % id)
