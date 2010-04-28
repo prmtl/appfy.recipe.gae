@@ -1,14 +1,55 @@
 """
+appfy.recipe.gae:app_lib
+------------------------
+Downloads packages from PyPi and installs in the app directory. This recipe
+extends `zc.recipe.egg_ <http://pypi.python.org/pypi/zc.recipe.egg>` so all
+the options from that recipe are also valid.
+
 Options
-=======
-eggs:
-lib-directory:
-use-zipimport:
-ignore-globs:
-primary-lib-directory:
-delete-safe: Checks directory destination before deleting. It will require
-    manual deletion if the checksum from the last build differs. Default to
-    true.
+~~~~~~~
+
+- ``eggs``: package names to be installed.
+- ``lib-directory``: the destination directory for the libaries. Default is
+  ``distlib``.
+- ``primary-lib-directory``: The main directory used for libraries. This is
+  only used to create a README.txt inside ``lib-directory`` with a warning.
+- ``use-zipimport``: If ``true``, a zip file with the libraries is created
+  instead of a directory. The zip file will use the value of
+  ``lib-directory`` for the filename, plus ``.zip``.
+- ``ignore-globs``: a list of glob patterns to not be copied from the library.
+- ``delete-safe``: Checks the checksum of the destination directory before
+  deleting. It will require manual deletion if the checksum from the last
+  build differs. Default to true.
+
+Example
+~~~~~~~
+
+    [app_lib]
+    # Sets the library dependencies for the app.
+    recipe = appfy.recipe.gae:app_lib
+    lib-directory = app/distlib
+    use-zipimport = false
+
+    # Define the libraries.
+    eggs =
+        babel
+        jinja2
+        wtforms
+        werkzeug
+        gaepytz
+        gaema
+        tipfy
+
+    # Don't copy files that match these glob patterns.
+    ignore-globs =
+        *.c
+        *.pyc
+        *.pyo
+        */test
+        */tests
+        */testsuite
+        */django
+        */sqlalchemy
 """
 import hashlib
 import logging
@@ -17,9 +58,12 @@ import shutil
 import stat
 import tempfile
 import uuid
+
 import zc.recipe.egg
 
-from appfy.recipe import copytree, ignore_patterns, rmfiles, zipdir
+
+from appfy.recipe import (copytree, ignore_patterns, include_patterns,
+    rmfiles, zipdir)
 
 
 BASE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
@@ -175,7 +219,7 @@ class Recipe(zc.recipe.egg.Scripts):
     def get_new_checksum(self, filename):
         if os.path.isdir(filename):
             # Remove *.pyc files to match the old checksum.
-            rmfiles(self.lib_dir, only=ignore_patterns('*.pyc'))
+            rmfiles(self.lib_dir, only=include_patterns('*.pyc'))
             # Zip first, then calculate checksum.
             id = uuid.uuid4().hex
             tmp_zip = os.path.join(tempfile.tempdir, 'TMP_%s.zip' % id)

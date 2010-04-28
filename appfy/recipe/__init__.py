@@ -1,3 +1,9 @@
+"""
+appfy.recipe
+------------
+
+General utilities shared by all recipes.
+"""
 import fnmatch
 import os
 import shutil
@@ -115,6 +121,9 @@ def ignore_patterns(*patterns):
 
         return set(ignored_names)
     return _ignore_patterns
+
+
+include_patterns = ignore_patterns
 
 
 def rmfiles(src, only=None):
