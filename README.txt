@@ -145,7 +145,11 @@ To set default values to start the dev_appserver, create a section
   # Set default values to start the dev_appserver. All options from the
   # command line are allowed. They are inserted at the beginning of the
   # arguments. Values are used as they are; don't use variables here.
-  defaults = --datastore_path=var --history_path=var --blobstore_path=var app
+  defaults =
+      --datastore_path=var
+      --history_path=var
+      --blobstore_path=var
+      app
 
 
 These options can be set in a single line as well. If an option is provided
