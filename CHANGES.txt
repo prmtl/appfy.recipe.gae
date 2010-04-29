@@ -1,5 +1,10 @@
 Versions
 ========
+Version 0.3 - April 29, 2010
+----------------------------
+- Added `config-file` option to appfy.recipe.gae:tools, to define the
+  configuration file used to set default arguments for the scripts.
+
 
 Version 0.2 - April 29, 2010
 ----------------------------

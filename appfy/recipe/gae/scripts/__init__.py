@@ -100,25 +100,25 @@ def get_dev_appserver_config(config_file):
     return config
 
 
-def appcfg(base, gae_path):
+def appcfg(base, gae_path, config_file):
     runpy.run_module('appcfg', run_name='__main__')
 
 
-def bulkload_client(base, gae_path):
+def bulkload_client(base, gae_path, config_file):
     runpy.run_module('bulkload_client', run_name='__main__')
 
 
-def bulkloader(base, gae_path):
+def bulkloader(base, gae_path, config_file):
     runpy.run_module('bulkloader', run_name='__main__')
 
 
-def dev_appserver(base, gae_path):
-    config = get_dev_appserver_config(os.path.join(base, 'buildout.cfg'))
+def dev_appserver(base, gae_path, config_file):
+    config = get_dev_appserver_config(config_file)
     if config:
         sys.argv = get_dev_appserver_argv(config)
 
     runpy.run_module('dev_appserver', run_name='__main__')
 
 
-def remote_api_shell(base, gae_path):
+def remote_api_shell(base, gae_path, config_file):
     runpy.run_module('remote_api_shell', run_name='__main__')

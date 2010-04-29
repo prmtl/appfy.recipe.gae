@@ -28,6 +28,8 @@ Options
     the bin directory. Default is `dev_appserver`.
 :remote_api_shell-script: Name of the remote_api_shell script to be
     installed in the bin directory. Default is `remote_api_shell`.
+:config-file: Configuration file with the default values to use in
+    scripts. Default is `script_defaults.cfg`.
 
 Example
 ~~~~~~~
@@ -44,9 +46,8 @@ Note that this example references an `gae_sdk` section from the
 `appfy.recipe.gae:sdk` example. An absolute path could also be used.
 
 To set default values to start the dev_appserver, create a section
-`dev_appserver` in buildout.cfg. For example:
-
-::
+`dev_appserver` in the defined configuration file (`script_defaults.cfg` by
+default). For example::
 
   [dev_appserver]
   # Set default values to start the dev_appserver. All options from the
@@ -79,6 +80,8 @@ class Recipe(zc.recipe.egg.Scripts):
         # Set default values.
         opts.setdefault('sdk-directory', os.path.join(buildout['buildout']
             ['parts-directory'], 'google_appengine'))
+        opts.setdefault('config-file', os.path.join(buildout['buildout']
+            ['directory'], 'script_defaults.cfg'))
         opts.setdefault('appcfg-script',           'appcfg')
         opts.setdefault('bulkload_client-script',  'bulkload_client')
         opts.setdefault('bulkloader-script',       'bulkloader')
@@ -89,6 +92,7 @@ class Recipe(zc.recipe.egg.Scripts):
         opts.setdefault('eggs', '')
 
         # Set normalized paths.
+        self.config_file = os.path.abspath(opts['config-file'])
         self.sdk_dir = os.path.abspath(opts['sdk-directory'])
 
         # Set the scripts to be generated.
@@ -111,14 +115,17 @@ class Recipe(zc.recipe.egg.Scripts):
 
     def install(self):
         """Creates the scripts."""
-        entries =[]
-        for script, name in self.scripts:
-            entries.append('%s=appfy.recipe.gae.scripts:%s' % (name, script))
+        m = 'appfy.recipe.gae.scripts'
+        entry_points =['%s=%s:%s' % (n, m, s) for n, s in self.scripts]
+        initialization = [
+            'gae = %s' % self.get_path(self.sdk_dir),
+            'cfg = %s' % self.get_path(self.config_file),
+        ]
 
         self.options.update({
-            'entry-points':   ' '.join(entries),
-            'initialization': 'gae = %s' % self.get_path(self.sdk_dir),
-            'arguments':      'base, gae',
+            'entry-points':   ' '.join(entry_points),
+            'initialization': '\n'.join(initialization),
+            'arguments':      'base, gae, cfg',
         })
 
         return super(Recipe, self).install()

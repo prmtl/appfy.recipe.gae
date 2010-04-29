@@ -132,6 +132,8 @@ Options
     the bin directory. Default is `dev_appserver`.
 :remote_api_shell-script: Name of the remote_api_shell script to be
     installed in the bin directory. Default is `remote_api_shell`.
+:config-file: Configuration file with the default values to use in
+    scripts. Default is `script_defaults.cfg`.
 
 Example
 ~~~~~~~
@@ -148,9 +150,8 @@ Note that this example references an `gae_sdk` section from the
 `appfy.recipe.gae:sdk` example. An absolute path could also be used.
 
 To set default values to start the dev_appserver, create a section
-`dev_appserver` in buildout.cfg. For example:
-
-::
+`dev_appserver` in the defined configuration file (`script_defaults.cfg` by
+default). For example::
 
   [dev_appserver]
   # Set default values to start the dev_appserver. All options from the
