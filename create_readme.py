@@ -16,7 +16,10 @@ def get_doc(filename):
     f = open(filename, 'r')
     content = f.read()
     f.close()
-    return content[3:content.find('"""', 1)]
+
+    start = content.find('"""')
+    end = content.find('"""', start + 1)
+    return content[start + 3:end]
 
 
 def create_readme():

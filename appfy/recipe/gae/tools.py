@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
 """
 appfy.recipe.gae:tools
 ----------------------
 
-Installs appcfg, dev_appserver and python executables in the buildout
-directory. It also allows to set default values to start the dev_appserver.
+Installs a python executable and several SDK scripts in the buildout
+directory: appcfg, bulkload_client, bulkloader, dev_appserver and
+remote_api_shell.
+
+It also allows to set default values to start the dev_appserver.
 
 This recipe extends `zc.recipe.egg <http://pypi.python.org/pypi/zc.recipe.egg>`_
 so all the options from that recipe are also valid.
@@ -11,14 +15,19 @@ so all the options from that recipe are also valid.
 Options
 ~~~~~~~
 
-:sdk-directory: path to the App Engine SDK directory. It can be an
+:sdk-directory: Path to the App Engine SDK directory. It can be an
     absolute path or a reference to the `appfy.recipe.gae:sdk` destination
     option. Default is `${buildout:parts-directory}/google_appengine`.
-:dev_appserver-script: path to the dev_appserver script. Default is
-    `${buildout:bin-directory}/dev_appserver`.
-:appcfg-script: path to the appcfg script. Default is
-    `${buildout:bin-directory}/appcfg`.
-
+:appcfg-script: Name of the appcfg script to be installed in the bin
+    directory.. Default is `appcfg`.
+:bulkload_client-script: Name of the bulkloader script to be installed in
+    the bin directory. Default is `bulkload_client`.
+:bulkloader-script: Name of the bulkloader script to be installed in
+    the bin directory. Default is `bulkloader`.
+:dev_appserver-script: Name of the dev_appserver script to be installed in
+    the bin directory. Default is `dev_appserver`.
+:remote_api_shell-script: Name of the remote_api_shell script to be
+    installed in the bin directory. Default is `remote_api_shell`.
 
 Example
 ~~~~~~~
@@ -67,23 +76,29 @@ BASE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
 
 class Recipe(zc.recipe.egg.Scripts):
     def __init__(self, buildout, name, opts):
-        bin_dir = buildout['buildout']['bin-directory']
-        parts_dir = buildout['buildout']['parts-directory']
-
         # Set default values.
-        join = os.path.join
-        abspath = os.path.abspath
-        opts.setdefault('sdk-directory', join(parts_dir, 'google_appengine'))
-        opts.setdefault('dev_appserver-script', join(bin_dir, 'dev_appserver'))
-        opts.setdefault('appcfg-script', join(bin_dir, 'appcfg'))
+        opts.setdefault('sdk-directory', os.path.join(buildout['buildout']
+            ['parts-directory'], 'google_appengine'))
+        opts.setdefault('appcfg-script',           'appcfg')
+        opts.setdefault('bulkload_client-script',  'bulkload_client')
+        opts.setdefault('bulkloader-script',       'bulkloader')
+        opts.setdefault('dev_appserver-script',    'dev_appserver')
+        opts.setdefault('remote_api_shell-script', 'remote_api_shell')
         opts.setdefault('interpreter', 'python')
         opts.setdefault('extra-paths', '')
         opts.setdefault('eggs', '')
 
         # Set normalized paths.
-        self.sdk_dir = abspath(opts['sdk-directory'])
-        self.server_script = abspath(opts['dev_appserver-script'])
-        self.appcfg_script = abspath(opts['appcfg-script'])
+        self.sdk_dir = os.path.abspath(opts['sdk-directory'])
+
+        # Set the scripts to be generated.
+        self.scripts = [
+            ('appcfg',           opts['appcfg-script']),
+            ('bulkload_client',  opts['bulkload_client-script']),
+            ('bulkloader',       opts['bulkloader-script']),
+            ('dev_appserver',    opts['dev_appserver-script']),
+            ('remote_api_shell', opts['remote_api_shell-script']),
+        ]
 
         # Add the SDK and this recipe package to the path.
         opts['extra-paths'] += '\n%s\n%s' % (BASE, self.sdk_dir)
@@ -96,11 +111,12 @@ class Recipe(zc.recipe.egg.Scripts):
 
     def install(self):
         """Creates the scripts."""
-        scripts = 'appfy.recipe.gae.scripts'
+        entries =[]
+        for script, name in self.scripts:
+            entries.append('%s=appfy.recipe.gae.scripts:%s' % (name, script))
 
         self.options.update({
-            'entry-points':   '%s=%s:appcfg %s=%s:dev_appserver' % (
-                self.appcfg_script, scripts, self.server_script, scripts),
+            'entry-points':   ' '.join(entries),
             'initialization': 'gae = %s' % self.get_path(self.sdk_dir),
             'arguments':      'base, gae',
         })

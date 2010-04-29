@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import ConfigParser
 import os
 import runpy
@@ -103,9 +104,21 @@ def appcfg(base, gae_path):
     runpy.run_module('appcfg', run_name='__main__')
 
 
+def bulkload_client(base, gae_path):
+    runpy.run_module('bulkload_client', run_name='__main__')
+
+
+def bulkloader(base, gae_path):
+    runpy.run_module('bulkloader', run_name='__main__')
+
+
 def dev_appserver(base, gae_path):
     config = get_dev_appserver_config(os.path.join(base, 'buildout.cfg'))
     if config:
         sys.argv = get_dev_appserver_argv(config)
 
     runpy.run_module('dev_appserver', run_name='__main__')
+
+
+def remote_api_shell(base, gae_path):
+    runpy.run_module('remote_api_shell', run_name='__main__')

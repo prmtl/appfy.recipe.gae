@@ -4,13 +4,15 @@ appfy.recipe.gae
 `appfy.recipe.gae` provides a series of zc.buildout recipes to help App
 Engine development. It is inspired by
 `rod.recipe.appengine <http://pypi.python.org/pypi/rod.recipe.appengine>`_,
-but with support for a more natural layout and functionalities split in
-different recipes. Currently `appfy.recipe.gae` has 3 recipes:
+but using a different layout and with extended functionalities. It is also
+split in different recipes. Currently `appfy.recipe.gae` has 3 recipes:
 
 :appfy.recipe.gae\:sdk: Downloads and installs the App Engine SDK.
-:appfy.recipe.gae\:tools: Installs appcfg, dev_appserver and python
-    executables.
-:appfy.recipe.gae\:app_lib: Downloads packages from PyPi and installs in
+:appfy.recipe.gae\:tools: Installs a python executable and several SDK
+    scripts in the buildout directory: appcfg, bulkload_client, bulkloader,
+    dev_appserver and remote_api_shell. It also allows to set default values
+    to start the dev_appserver.
+:appfy.recipe.gae\:app_lib: Downloads libraries from PyPi and installs in
     the app directory.
 
 Source code and issue tracker can be found at `http://code.google.com/p/appfy/ <http://code.google.com/p/appfy/>`_.
@@ -18,25 +20,26 @@ Source code and issue tracker can be found at `http://code.google.com/p/appfy/ <
 
 appfy.recipe.gae:app_lib
 ------------------------
-Downloads packages from PyPi and installs in the app directory. This recipe
+Downloads libraries from PyPi and installs in the app directory. This recipe
 extends `zc.recipe.egg <http://pypi.python.org/pypi/zc.recipe.egg>`_ so all
 the options from that recipe are also valid.
 
 Options
 ~~~~~~~
 
-:eggs: package names to be installed.
-:lib-directory: the destination directory for the libaries. Default is
-  `distlib`.
+:eggs: Package names to be installed.
+:lib-directory: Destination directory for the libraries. Default is
+    `distlib`.
 :primary-lib-directory: The main directory used for libraries. This is
-  only used to create a README.txt inside `lib-directory` with a warning.
+    only used to create a README.txt inside `lib-directory` with a warning.
+    Default is `lib`.
 :use-zipimport: If `true`, a zip file with the libraries is created
-  instead of a directory. The zip file will use the value of
-  `lib-directory` for the filename, plus `.zip`.
-:ignore-globs: a list of glob patterns to not be copied from the library.
+    instead of a directory. The zip filename will be the value of
+    `lib-directory` plus `.zip`.
+:ignore-globs: A list of glob patterns to not be copied from the library.
 :delete-safe: Checks the checksum of the destination directory before
-  deleting. It will require manual deletion if the checksum from the last
-  build differs. Default to true.
+    deleting. It will require manual deletion if the checksum from the last
+    build differs. Default to true.
 
 Example
 ~~~~~~~
@@ -81,9 +84,9 @@ so all the download options from that recipe are also valid.
 Options
 ~~~~~~~
 
-:destination: destination of the extracted SDK download. Default is
+:destination: Destination of the extracted SDK download. Default is
     `${buildout:parts-directory}/google_appengine`.
-:clear-destination: if `true`, deletes the destination dir before
+:clear-destination: If `true`, deletes the destination dir before
     extracting the download. Default is `false`.
 
 Example
@@ -104,8 +107,11 @@ Example
 appfy.recipe.gae:tools
 ----------------------
 
-Installs appcfg, dev_appserver and python executables in the buildout
-directory. It also allows to set default values to start the dev_appserver.
+Installs a python executable and several SDK scripts in the buildout
+directory: appcfg, bulkload_client, bulkloader, dev_appserver and
+remote_api_shell.
+
+It also allows to set default values to start the dev_appserver.
 
 This recipe extends `zc.recipe.egg <http://pypi.python.org/pypi/zc.recipe.egg>`_
 so all the options from that recipe are also valid.
@@ -113,14 +119,19 @@ so all the options from that recipe are also valid.
 Options
 ~~~~~~~
 
-:sdk-directory: path to the App Engine SDK directory. It can be an
+:sdk-directory: Path to the App Engine SDK directory. It can be an
     absolute path or a reference to the `appfy.recipe.gae:sdk` destination
     option. Default is `${buildout:parts-directory}/google_appengine`.
-:dev_appserver-script: path to the dev_appserver script. Default is
-    `${buildout:bin-directory}/dev_appserver`.
-:appcfg-script: path to the appcfg script. Default is
-    `${buildout:bin-directory}/appcfg`.
-
+:appcfg-script: Name of the appcfg script to be installed in the bin
+    directory.. Default is `appcfg`.
+:bulkload_client-script: Name of the bulkloader script to be installed in
+    the bin directory. Default is `bulkload_client`.
+:bulkloader-script: Name of the bulkloader script to be installed in
+    the bin directory. Default is `bulkloader`.
+:dev_appserver-script: Name of the dev_appserver script to be installed in
+    the bin directory. Default is `dev_appserver`.
+:remote_api_shell-script: Name of the remote_api_shell script to be
+    installed in the bin directory. Default is `remote_api_shell`.
 
 Example
 ~~~~~~~

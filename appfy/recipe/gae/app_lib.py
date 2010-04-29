@@ -1,25 +1,27 @@
+# -*- coding: utf-8 -*-
 """
 appfy.recipe.gae:app_lib
 ------------------------
-Downloads packages from PyPi and installs in the app directory. This recipe
+Downloads libraries from PyPi and installs in the app directory. This recipe
 extends `zc.recipe.egg <http://pypi.python.org/pypi/zc.recipe.egg>`_ so all
 the options from that recipe are also valid.
 
 Options
 ~~~~~~~
 
-:eggs: package names to be installed.
-:lib-directory: the destination directory for the libaries. Default is
-  `distlib`.
+:eggs: Package names to be installed.
+:lib-directory: Destination directory for the libraries. Default is
+    `distlib`.
 :primary-lib-directory: The main directory used for libraries. This is
-  only used to create a README.txt inside `lib-directory` with a warning.
+    only used to create a README.txt inside `lib-directory` with a warning.
+    Default is `lib`.
 :use-zipimport: If `true`, a zip file with the libraries is created
-  instead of a directory. The zip file will use the value of
-  `lib-directory` for the filename, plus `.zip`.
-:ignore-globs: a list of glob patterns to not be copied from the library.
+    instead of a directory. The zip filename will be the value of
+    `lib-directory` plus `.zip`.
+:ignore-globs: A list of glob patterns to not be copied from the library.
 :delete-safe: Checks the checksum of the destination directory before
-  deleting. It will require manual deletion if the checksum from the last
-  build differs. Default to true.
+    deleting. It will require manual deletion if the checksum from the last
+    build differs. Default to true.
 
 Example
 ~~~~~~~
