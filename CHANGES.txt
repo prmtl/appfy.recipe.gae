@@ -1,5 +1,14 @@
 Versions
 ========
+Version 0.4 - April 30, 2010
+----------------------------
+- Fixed script path problem when buildout is configured to use absolute paths.
+  Fixes issue #1. Thanks Lacrima.Maxim for the report.
+
+- Scripts now run using alter_sys=True, so that help messages that use __doc__
+  are displayed correctly.
+
+
 Version 0.3 - April 29, 2010
 ----------------------------
 - Added `config-file` option to appfy.recipe.gae:tools, to define the

@@ -122,6 +122,11 @@ class Recipe(zc.recipe.egg.Scripts):
             'cfg = %s' % self.get_path(self.config_file),
         ]
 
+        if self.use_rel_paths is not True:
+            # base won't be set if we are using absolute paths.
+            initialization.insert(0, 'base = %r' % self.buildout['buildout']
+                ['directory'])
+
         self.options.update({
             'entry-points':   ' '.join(entry_points),
             'initialization': '\n'.join(initialization),

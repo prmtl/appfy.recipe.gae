@@ -30,9 +30,6 @@ Options
 :eggs: Package names to be installed.
 :lib-directory: Destination directory for the libraries. Default is
     `distlib`.
-:primary-lib-directory: The main directory used for libraries. This is
-    only used to create a README.txt inside `lib-directory` with a warning.
-    Default is `lib`.
 :use-zipimport: If `true`, a zip file with the libraries is created
     instead of a directory. The zip filename will be the value of
     `lib-directory` plus `.zip`.
