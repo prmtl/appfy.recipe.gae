@@ -12,9 +12,6 @@ Options
 :eggs: Package names to be installed.
 :lib-directory: Destination directory for the libraries. Default is
     `distlib`.
-:primary-lib-directory: The main directory used for libraries. This is
-    only used to create a README.txt inside `lib-directory` with a warning.
-    Default is `lib`.
 :use-zipimport: If `true`, a zip file with the libraries is created
     instead of a directory. The zip filename will be the value of
     `lib-directory` plus `.zip`.
@@ -80,8 +77,7 @@ LIB_README = """Warning!
 This directory is removed every time the buildout tool runs, so don't place
 or edit things here because any changes will be lost!
 
-Use the "%(lib_dir)s" directory to place other libraries or to override
-packages from this directory."""
+Use a different directory for extra libraries instead of this one."""
 
 
 class Recipe(zc.recipe.egg.Scripts):
@@ -94,22 +90,24 @@ class Recipe(zc.recipe.egg.Scripts):
         self.checksum_file = os.path.join(self.parts_dir, 'checksum_%s.txt' %
             name)
 
-        self.lib_dir = opts.get('lib-directory', 'distlib')
-        if not os.path.isabs(self.lib_dir):
-            self.lib_dir = os.path.abspath(self.lib_dir)
+        lib_dir = opts.get('lib-directory', 'distlib')
+        self.lib_dir = os.path.abspath(lib_dir)
 
         self.use_zip = opts.get('use-zipimport', 'false') == 'true'
         if self.use_zip:
             self.lib_dir += '.zip'
 
-        self.primary_lib_dir = opts.get('primary-lib-directory', 'lib')
-
         # Set list of patterns to be ignored.
         self.ignore = [i for i in opts.get('ignore-globs', '') \
             .split('\n') if i.strip()]
 
-        # Unused for now. All deletion is safe.
-        self.delete_safe = opts.get('delete-safe', 'true') != 'false'
+        self.copy_to_app = opts.get('copy-to-app', 'true') == 'true'
+        if self.copy_to_app:
+            self.delete_safe = opts.get('delete-safe', 'true') != 'false'
+        else:
+            self.delete_safe = False
+            self.app_lib_dir = self.lib_dir
+            self.lib_dir = os.path.join(self.parts_dir, lib_dir)
 
         super(Recipe, self).__init__(buildout, name, opts)
 
@@ -118,6 +116,16 @@ class Recipe(zc.recipe.egg.Scripts):
         reqs, ws = self.working_set()
         paths = self.get_package_paths(ws)
 
+        if self.copy_to_app:
+            self.install_in_app_dir(paths)
+        else:
+            self.install_in_parts_dir(paths)
+
+        return super(Recipe, self).install()
+
+    update = install
+
+    def install_in_app_dir(self, paths):
         # Create temporary directory and zip names.
         id = uuid.uuid4().hex
         tmp_dir = os.path.join(tempfile.tempdir, 'TMP_%s' % id)
@@ -136,7 +144,7 @@ class Recipe(zc.recipe.egg.Scripts):
 
             # Save README.
             f = open(os.path.join(tmp_dir, 'README.txt'), 'w')
-            f.write(LIB_README % {'lib_dir': self.primary_lib_dir})
+            f.write(LIB_README)
             f.close()
 
             # Zip temporary directory and create checksum.
@@ -162,9 +170,21 @@ class Recipe(zc.recipe.egg.Scripts):
             if os.path.isfile(tmp_zip):
                 os.remove(tmp_zip)
 
-        return super(Recipe, self).install()
+    def install_in_parts_dir(self, paths):
+        """Still unsupported.
 
-    update = install
+        This option triggers this:
+
+        copy-to-app = false
+
+        The idea is to move the libs to the app only during deployment.
+        """
+        self.delete_libs()
+        os.mkdir(self.lib_dir)
+        for name, src in paths:
+            dst = os.path.join(self.lib_dir, name)
+            self.logger.info('Copying %r...' % name)
+            copytree(src, dst, ignore=ignore_patterns(*self.ignore))
 
     def get_package_paths(self, ws):
         """Returns the list of package paths to be copied."""
