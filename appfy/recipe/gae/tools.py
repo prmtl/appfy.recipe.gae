@@ -9,7 +9,7 @@ remote_api_shell.
 
 It also allows to set default values to start the dev_appserver.
 
-This recipe extends `zc.recipe.egg <http://pypi.python.org/pypi/zc.recipe.egg>`_
+This recipe extends `zc.recipe.egg.Scripts <http://pypi.python.org/pypi/zc.recipe.egg>`_,
 so all the options from that recipe are also valid.
 
 Options
@@ -54,14 +54,14 @@ default). For example::
   # command line are allowed. They are inserted at the beginning of the
   # arguments. Values are used as they are; don't use variables here.
   defaults =
-      --datastore_path=var
-      --history_path=var
-      --blobstore_path=var
+      --datastore_path=var/data.store
+      --history_path=var/history.store
+      --blobstore_path=var/blob.store
       app
 
 
-These options can be set in a single line as well. If an option is provided
-when calling dev_appserver, it will override the default value if it is set.
+Each option should be set in a separate line, as displayed above. Options
+provided when calling dev_appserver will override the default values.
 """
 import logging
 import os

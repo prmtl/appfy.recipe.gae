@@ -3,8 +3,8 @@
 appfy.recipe.gae:app_lib
 ------------------------
 Downloads libraries from PyPi and installs in the app directory. This recipe
-extends `zc.recipe.egg <http://pypi.python.org/pypi/zc.recipe.egg>`_ so all
-the options from that recipe are also valid.
+extends `zc.recipe.egg.Eggs <http://pypi.python.org/pypi/zc.recipe.egg>`_,
+so all the options from that recipe are also valid.
 
 Options
 ~~~~~~~
@@ -80,7 +80,7 @@ or edit things here because any changes will be lost!
 Use a different directory for extra libraries instead of this one."""
 
 
-class Recipe(zc.recipe.egg.Scripts):
+class Recipe(zc.recipe.egg.Eggs):
     def __init__(self, buildout, name, opts):
         # Set a logger with the section name.
         self.logger = logging.getLogger(name)
@@ -109,6 +109,7 @@ class Recipe(zc.recipe.egg.Scripts):
             self.app_lib_dir = self.lib_dir
             self.lib_dir = os.path.join(self.parts_dir, lib_dir)
 
+        opts.setdefault('eggs', '')
         super(Recipe, self).__init__(buildout, name, opts)
 
     def install(self):

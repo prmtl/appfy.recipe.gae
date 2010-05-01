@@ -1,5 +1,13 @@
 Versions
 ========
+Version 0.4.2 - May 1st, 2010
+-----------------------------
+- app_lib now extends zc.recipe.egg.Eggs and sets default eggs to an empty
+  string, just to avoid errors.
+
+- More small refactorings.
+
+
 Version 0.4.1 - May 1st, 2010
 -----------------------------
 - Removed `primary-lib-directory` option from app_lib.
