@@ -29,7 +29,7 @@ Options
 :remote_api_shell-script: Name of the remote_api_shell script to be
     installed in the bin directory. Default is `remote_api_shell`.
 :config-file: Configuration file with the default values to use in
-    scripts. Default is `script_defaults.cfg`.
+    scripts. Default is `gaetools.cfg`.
 
 Example
 ~~~~~~~
@@ -39,14 +39,14 @@ Example
   [gae_tools]
   # Installs appcfg, dev_appserver and python executables in the bin directory.
   recipe = appfy.recipe.gae:tools
-  sdk-directory = ${gae_sdk:destination}
+  sdk-directory = ${gae_sdk:destination}/google_appengine
 
 
 Note that this example references an `gae_sdk` section from the
 `appfy.recipe.gae:sdk` example. An absolute path could also be used.
 
 To set default values to start the dev_appserver, create a section
-`dev_appserver` in the defined configuration file (`script_defaults.cfg` by
+`dev_appserver` in the defined configuration file (`gaetools.cfg` by
 default). For example::
 
   [dev_appserver]
@@ -77,32 +77,33 @@ BASE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
 
 class Recipe(zc.recipe.egg.Scripts):
     def __init__(self, buildout, name, opts):
+        self.parts_dir = buildout['buildout']['parts-directory']
+        self.buildout_dir = buildout['buildout']['directory']
+
         # Set default values.
-        opts.setdefault('sdk-directory', os.path.join(buildout['buildout']
-            ['parts-directory'], 'google_appengine'))
-        opts.setdefault('config-file', os.path.join(buildout['buildout']
-            ['directory'], 'script_defaults.cfg'))
-        opts.setdefault('appcfg-script',           'appcfg')
-        opts.setdefault('bulkload_client-script',  'bulkload_client')
-        opts.setdefault('bulkloader-script',       'bulkloader')
-        opts.setdefault('dev_appserver-script',    'dev_appserver')
-        opts.setdefault('remote_api_shell-script', 'remote_api_shell')
-        opts.setdefault('interpreter', 'python')
-        opts.setdefault('extra-paths', '')
-        opts.setdefault('eggs', '')
+        join = os.path.join
+        defaults = {
+            'sdk-directory': join(self.parts_dir, 'google_appengine'),
+            'config-file':   join(self.buildout_dir, 'gaetools.cfg'),
+            'interpreter':   'python',
+            'extra-paths':   '',
+            'eggs':          '',
+        }
+        defaults.update(opts)
+        opts = defaults
 
         # Set normalized paths.
         self.config_file = os.path.abspath(opts['config-file'])
         self.sdk_dir = os.path.abspath(opts['sdk-directory'])
 
         # Set the scripts to be generated.
-        self.scripts = [
-            ('appcfg',           opts['appcfg-script']),
-            ('bulkload_client',  opts['bulkload_client-script']),
-            ('bulkloader',       opts['bulkloader-script']),
-            ('dev_appserver',    opts['dev_appserver-script']),
-            ('remote_api_shell', opts['remote_api_shell-script']),
-        ]
+        scripts = ['appcfg',
+                   'bulkload_client',
+                   'bulkloader',
+                   'dev_appserver',
+                   'remote_api_shell']
+
+        self.scripts = [(s, opts.get(s + '-script', s)) for s in scripts]
 
         # Add the SDK and this recipe package to the path.
         opts['extra-paths'] += '\n%s\n%s' % (BASE, self.sdk_dir)
@@ -115,17 +116,17 @@ class Recipe(zc.recipe.egg.Scripts):
 
     def install(self):
         """Creates the scripts."""
-        m = 'appfy.recipe.gae.scripts'
-        entry_points =['%s=%s:%s' % (n, m, s) for n, s in self.scripts]
-        initialization = [
-            'gae = %s' % self.get_path(self.sdk_dir),
-            'cfg = %s' % self.get_path(self.config_file),
-        ]
+        entry_points =['%s=appfy.recipe.gae.scripts:%s' % (scriptname,
+            function) for function, scriptname in self.scripts]
 
         if self.use_rel_paths is not True:
             # base won't be set if we are using absolute paths.
-            initialization.insert(0, 'base = %r' % self.buildout['buildout']
-                ['directory'])
+            initialization = ['base = %r' % self.buildout_dir]
+        else:
+            initialization = []
+
+        initialization.append('gae = %s' % self.get_path(self.sdk_dir))
+        initialization.append('cfg = %s' % self.get_path(self.config_file))
 
         self.options.update({
             'entry-points':   ' '.join(entry_points),

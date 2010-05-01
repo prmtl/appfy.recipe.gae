@@ -24,8 +24,7 @@ Example
   # Dowloads and extracts the App Engine SDK.
   recipe = appfy.recipe.gae:sdk
   url = http://googleappengine.googlecode.com/files/google_appengine_1.3.3.zip
-  destination = ${buildout:parts-directory}/google_appengine
-  strip-top-level-dir = true
+  destination = ${buildout:parts-directory}
   hash-name = false
   clear-destination = true
 """
