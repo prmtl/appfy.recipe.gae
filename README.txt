@@ -95,8 +95,7 @@ Example
   # Dowloads and extracts the App Engine SDK.
   recipe = appfy.recipe.gae:sdk
   url = http://googleappengine.googlecode.com/files/google_appengine_1.3.3.zip
-  destination = ${buildout:parts-directory}/google_appengine
-  strip-top-level-dir = true
+  destination = ${buildout:parts-directory}
   hash-name = false
   clear-destination = true
 
@@ -130,7 +129,7 @@ Options
 :remote_api_shell-script: Name of the remote_api_shell script to be
     installed in the bin directory. Default is `remote_api_shell`.
 :config-file: Configuration file with the default values to use in
-    scripts. Default is `script_defaults.cfg`.
+    scripts. Default is `gaetools.cfg`.
 
 Example
 ~~~~~~~
@@ -140,14 +139,14 @@ Example
   [gae_tools]
   # Installs appcfg, dev_appserver and python executables in the bin directory.
   recipe = appfy.recipe.gae:tools
-  sdk-directory = ${gae_sdk:destination}
+  sdk-directory = ${gae_sdk:destination}/google_appengine
 
 
 Note that this example references an `gae_sdk` section from the
 `appfy.recipe.gae:sdk` example. An absolute path could also be used.
 
 To set default values to start the dev_appserver, create a section
-`dev_appserver` in the defined configuration file (`script_defaults.cfg` by
+`dev_appserver` in the defined configuration file (`gaetools.cfg` by
 default). For example::
 
   [dev_appserver]
