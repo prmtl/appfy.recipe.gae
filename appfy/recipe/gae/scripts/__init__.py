@@ -90,9 +90,8 @@ def get_config(filename, section=None, key=None):
 def get_dev_appserver_config(config_file):
     config = get_config(config_file, 'dev_appserver', 'defaults')
     if config:
-        # Accept single line or multi-line configuration.
-        config = ' '.join([o for o in config.split('\n') if o.strip()])
-        config = config.split()
+        # Only accept multi-line configuration.
+        config = [o.strip() for o in config.split('\n') if o.strip()]
 
     if not config:
         return None

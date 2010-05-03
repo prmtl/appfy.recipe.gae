@@ -1,5 +1,12 @@
 Versions
 ========
+Version 0.4.3 - May 1st, 2010
+-----------------------------
+- Only accepts multi-line configuration for gaetools.
+
+- Fixed tmpdir in app_lib.
+
+
 Version 0.4.2 - May 1st, 2010
 -----------------------------
 - app_lib now extends zc.recipe.egg.Eggs and sets default eggs to an empty
