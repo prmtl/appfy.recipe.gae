@@ -85,6 +85,9 @@ class Recipe(zc.recipe.egg.Eggs):
         # Set a logger with the section name.
         self.logger = logging.getLogger(name)
 
+        # Unzip eggs by default or we can't use some.
+        opts.setdefault('unzip', 'true')
+
         self.parts_dir = buildout['buildout']['parts-directory']
 
         self.checksum_file = os.path.join(self.parts_dir, 'checksum_%s.txt' %
