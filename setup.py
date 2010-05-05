@@ -39,7 +39,7 @@ def get_readme():
 
 setup(
     name='appfy.recipe.gae',
-    version='0.4.5',
+    version='0.5',
     author='Rodrigo Moraes',
     author_email='rodrigo.moraes@gmail.com',
     description='Buildout recipes for App Engine development.',

@@ -16,9 +16,10 @@ Options
     instead of a directory. The zip filename will be the value of
     `lib-directory` plus `.zip`.
 :ignore-globs: A list of glob patterns to not be copied from the library.
-:delete-safe: Checks the checksum of the destination directory before
-    deleting. It will require manual deletion if the checksum from the last
-    build differs. Default to true.
+:delete-safe: If `true`, always move `lib-directory` to a temporary directory
+    inside the parts dir as a backup when building, instead of deleting it.
+    This is to avoid accidental deletion if `lib-directory` is badly
+    configured. Default to `true`.
 
 Example
 ~~~~~~~
@@ -52,11 +53,10 @@ Example
       */django
       */sqlalchemy
 """
-import hashlib
+import datetime
 import logging
 import os
 import shutil
-import stat
 import tempfile
 import uuid
 
@@ -89,16 +89,14 @@ class Recipe(zc.recipe.egg.Eggs):
         opts.setdefault('unzip', 'true')
 
         self.parts_dir = buildout['buildout']['parts-directory']
-
-        self.checksum_file = os.path.join(self.parts_dir, 'checksum_%s.txt' %
-            name)
+        self.temp_dir = os.path.join(self.parts_dir, 'temp')
 
         lib_dir = opts.get('lib-directory', 'distlib')
-        self.lib_dir = os.path.abspath(lib_dir)
+        self.lib_path = os.path.abspath(lib_dir)
 
         self.use_zip = opts.get('use-zipimport', 'false') == 'true'
         if self.use_zip:
-            self.lib_dir += '.zip'
+            self.lib_path += '.zip'
 
         # Set list of patterns to be ignored.
         self.ignore = [i for i in opts.get('ignore-globs', '') \
@@ -108,9 +106,10 @@ class Recipe(zc.recipe.egg.Eggs):
         if self.copy_to_app:
             self.delete_safe = opts.get('delete-safe', 'true') != 'false'
         else:
+            # Still unsupported.
             self.delete_safe = False
-            self.app_lib_dir = self.lib_dir
-            self.lib_dir = os.path.join(self.parts_dir, lib_dir)
+            self.app_lib_dir = self.lib_path
+            self.lib_path = os.path.join(self.parts_dir, lib_dir)
 
         opts.setdefault('eggs', '')
         super(Recipe, self).__init__(buildout, name, opts)
@@ -130,49 +129,34 @@ class Recipe(zc.recipe.egg.Eggs):
     update = install
 
     def install_in_app_dir(self, paths):
-        # Create temporary directory and zip names.
-        id = uuid.uuid4().hex
-        tmp_dir = os.path.join(tempfile.gettempdir(), 'TMP_%s' % id)
-        tmp_zip = os.path.join(tempfile.gettempdir(), 'TMP_%s.zip' % id)
+        # Delete old libs.
+        self.delete_libs()
 
-        if os.path.isdir(tmp_dir) or os.path.isfile(tmp_zip):
-            raise IOError('Temporary file already exists. Try again.')
+        if self.use_zip:
+            # Create temporary directory for the zip files.
+            tmp_dir = os.path.join(tempfile.gettempdir(), uuid.uuid4().hex)
+        else:
+            tmp_dir = self.lib_path
 
-        try:
-            # Copy all files to temporary dir.
+        if not os.path.exists(tmp_dir):
             os.mkdir(tmp_dir)
-            for name, src in paths:
-                dst = os.path.join(tmp_dir, name)
-                self.logger.info('Copying %r...' % name)
-                copytree(src, dst, ignore=ignore_patterns(*self.ignore))
 
-            # Save README.
-            f = open(os.path.join(tmp_dir, 'README.txt'), 'w')
-            f.write(LIB_README)
-            f.close()
+        # Copy all files.
+        for name, src in paths:
+            self.logger.info('Copying %r...' % name)
+            dst = os.path.join(tmp_dir, name)
+            copytree(src, dst, ignore=ignore_patterns(*self.ignore))
 
-            # Zip temporary directory and create checksum.
-            zipdir(tmp_dir, tmp_zip)
-            checksum = self.calculate_checksum(tmp_zip)
+        # Save README.
+        f = open(os.path.join(tmp_dir, 'README.txt'), 'w')
+        f.write(LIB_README)
+        f.close()
 
-            # Delete old libs and move the new ones.
-            self.delete_libs()
-            if self.use_zip:
-                shutil.copyfile(tmp_zip, self.lib_dir)
-            else:
-                copytree(tmp_dir, self.lib_dir)
-
-            self.logger.info('Copied libraries %r.' % self.lib_dir)
-
-            # Save current checksum.
-            self.save_checksum(checksum)
-        finally:
-            # Remove temporary directory and zip.
+        if self.use_zip:
+            # Zip file and remove temporary dir.
+            zipdir(tmp_dir, self.lib_path)
             if os.path.isdir(tmp_dir):
                 shutil.rmtree(tmp_dir)
-
-            if os.path.isfile(tmp_zip):
-                os.remove(tmp_zip)
 
     def install_in_parts_dir(self, paths):
         """Still unsupported.
@@ -183,10 +167,11 @@ class Recipe(zc.recipe.egg.Eggs):
 
         The idea is to move the libs to the app only during deployment.
         """
+        return
         self.delete_libs()
-        os.mkdir(self.lib_dir)
+        os.mkdir(self.lib_path)
         for name, src in paths:
-            dst = os.path.join(self.lib_dir, name)
+            dst = os.path.join(self.lib_path, name)
             self.logger.info('Copying %r...' % name)
             copytree(src, dst, ignore=ignore_patterns(*self.ignore))
 
@@ -211,60 +196,35 @@ class Recipe(zc.recipe.egg.Eggs):
         return pkgs
 
     def delete_libs(self):
-        if not os.path.exists(self.lib_dir):
+        """If the `delete-safe` option is set to true, move the old libraries
+        directory to a temporary directory inside the parts dir instead of
+        deleting it.
+        """
+        if not os.path.exists(self.lib_path):
             # Nothing to delete, so it is safe.
             return
 
         if self.delete_safe is True:
-            msg = "Please delete the libraries manually and try again: %r." \
-                "\nAlternatively you can set 'delete-safe = false' in " \
-                "buildout.cfg to never check for changes." % self.lib_dir
+            # Move directory or zip to temporary backup directory.
+            if not os.path.exists(self.temp_dir):
+                os.mkdir(self.temp_dir)
 
-            # Compare saved and current checksums.
-            old_checksum = self.get_old_checksum()
-            if old_checksum is None:
-                raise IOError("Missing checksum for the libraries. " + msg)
-            elif old_checksum != self.get_new_checksum(self.lib_dir):
-                raise IOError("The checksum for the libraries didn't match. "
-                    + msg)
+            date = datetime.datetime.now().strftime('_%Y_%m_%d_%H_%M_%S')
+            filename = os.path.basename(self.lib_path.rstrip(os.sep))
+            if self.use_zip:
+                filename = filename[:-4] + date + '.zip'
+            else:
+                filename += date
 
-        if self.use_zip:
-            os.remove(self.lib_dir)
-            self.logger.info('Removed lib-zip %r.' % self.lib_dir)
+            dst = os.path.join(self.temp_dir, filename)
+            shutil.move(self.lib_path, dst)
+            self.logger.info('Saved libraries backup in %r.' % dst)
         else:
-            # Delete the directory.
-            shutil.rmtree(self.lib_dir)
-            self.logger.info('Removed lib-directory %r.' % self.lib_dir)
-
-    def get_old_checksum(self):
-        if os.path.isfile(self.checksum_file):
-            f = open(self.checksum_file, 'r')
-            checksum = f.read().strip()
-            f.close()
-
-            return checksum
-
-    def get_new_checksum(self, filename):
-        if os.path.isdir(filename):
-            # Remove *.pyc files to match the old checksum.
-            rmfiles(self.lib_dir, only=include_patterns('*.pyc'))
-            # Zip first, then calculate checksum.
-            id = uuid.uuid4().hex
-            tmp_zip = os.path.join(tempfile.gettempdir(), 'TMP_%s.zip' % id)
-            zipdir(filename, tmp_zip)
-            checksum = self.calculate_checksum(tmp_zip)
-            os.remove(tmp_zip)
-        else:
-            checksum = self.calculate_checksum(filename)
-
-        return checksum
-
-    def calculate_checksum(self, filename):
-        return hashlib.md5(open(filename, 'rb').read()).hexdigest()
-
-    def save_checksum(self, checksum):
-        f = open(self.checksum_file, 'w')
-        f.write(checksum)
-        f.close()
-        self.logger.info('Generated libraries checksum %r.' % \
-            self.checksum_file)
+            # Simply delete the directory or zip.
+            if self.use_zip:
+                os.remove(self.lib_path)
+                self.logger.info('Removed lib-zip %r.' % self.lib_path)
+            else:
+                # Delete the directory.
+                shutil.rmtree(self.lib_path)
+                self.logger.info('Removed lib-directory %r.' % self.lib_path)

@@ -1,5 +1,12 @@
 Versions
 ========
+Version 0.5 - May 5, 2010
+---------------------------
+- Dropped checksum checking, and now move files to a backup directory if
+  delete-safe is `true` (which is the default). This makes the build faster
+  and avoids the annoying invalid checksum errors.
+
+
 Version 0.4.5 - May 5, 2010
 ---------------------------
 - Use tempfile.gettempdir() to save temporary files. Thanks, tlynn.
