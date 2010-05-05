@@ -1,5 +1,10 @@
 Versions
 ========
+Version 0.4.5 - May 5, 2010
+---------------------------
+- Use tempfile.gettempdir() to save temporary files. Thanks, tlynn.
+
+
 Version 0.4.4 - May 3, 2010
 ---------------------------
 - Unzip eggs by default in app_lib or we can't use some.

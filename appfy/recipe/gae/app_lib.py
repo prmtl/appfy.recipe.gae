@@ -132,8 +132,8 @@ class Recipe(zc.recipe.egg.Eggs):
     def install_in_app_dir(self, paths):
         # Create temporary directory and zip names.
         id = uuid.uuid4().hex
-        tmp_dir = os.path.join(tempfile.tempdir, 'TMP_%s' % id)
-        tmp_zip = os.path.join(tempfile.tempdir, 'TMP_%s.zip' % id)
+        tmp_dir = os.path.join(tempfile.gettempdir(), 'TMP_%s' % id)
+        tmp_zip = os.path.join(tempfile.gettempdir(), 'TMP_%s.zip' % id)
 
         if os.path.isdir(tmp_dir) or os.path.isfile(tmp_zip):
             raise IOError('Temporary file already exists. Try again.')
@@ -250,7 +250,7 @@ class Recipe(zc.recipe.egg.Eggs):
             rmfiles(self.lib_dir, only=include_patterns('*.pyc'))
             # Zip first, then calculate checksum.
             id = uuid.uuid4().hex
-            tmp_zip = os.path.join(tempfile.tempdir, 'TMP_%s.zip' % id)
+            tmp_zip = os.path.join(tempfile.gettempdir(), 'TMP_%s.zip' % id)
             zipdir(filename, tmp_zip)
             checksum = self.calculate_checksum(tmp_zip)
             os.remove(tmp_zip)
