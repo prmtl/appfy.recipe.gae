@@ -34,9 +34,10 @@ Options
     instead of a directory. The zip filename will be the value of
     `lib-directory` plus `.zip`.
 :ignore-globs: A list of glob patterns to not be copied from the library.
-:delete-safe: Checks the checksum of the destination directory before
-    deleting. It will require manual deletion if the checksum from the last
-    build differs. Default to true.
+:delete-safe: If `true`, always move `lib-directory` to a temporary directory
+    inside the parts dir as a backup when building, instead of deleting it.
+    This is to avoid accidental deletion if `lib-directory` is badly
+    configured. Default to `true`.
 
 Example
 ~~~~~~~
