@@ -53,6 +53,7 @@ default). For example::
   # Set default values to start the dev_appserver. All options from the
   # command line are allowed. They are inserted at the beginning of the
   # arguments. Values are used as they are; don't use variables here.
+  recipe = appfy.recipe.gae:tools
   defaults =
       --datastore_path=var/data.store
       --history_path=var/history.store
