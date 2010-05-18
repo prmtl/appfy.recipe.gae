@@ -1,5 +1,11 @@
 Versions
 ========
+Version 0.5.1 - May 17, 2010
+----------------------------
+- appfy.recipe.gae:app_lib now extends zc.recipe.egg.Scripts, so that scripts
+  from packages are installed, as before.
+
+
 Version 0.5 - May 5, 2010
 ---------------------------
 - Dropped checksum checking, and now move files to a backup directory if

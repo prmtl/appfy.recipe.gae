@@ -21,7 +21,7 @@ Source code and issue tracker can be found at `http://code.google.com/p/appfy/ <
 appfy.recipe.gae:app_lib
 ------------------------
 Downloads libraries from PyPi and installs in the app directory. This recipe
-extends `zc.recipe.egg.Eggs <http://pypi.python.org/pypi/zc.recipe.egg>`_,
+extends `zc.recipe.egg.Scripts <http://pypi.python.org/pypi/zc.recipe.egg>`_,
 so all the options from that recipe are also valid.
 
 Options
