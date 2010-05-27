@@ -32,7 +32,7 @@ def get_relative_path(path, base_path):
     return 'join(base, %r)' % os.path.join(*r)
 
 
-def copytree(src, dst, symlinks=False, ignore=None):
+def copytree(src, dst, symlinks=False, ignore=None, logger=None):
     """Recursively copy a directory tree using copy2().
 
     The destination directory must not already exist.
@@ -72,7 +72,12 @@ def copytree(src, dst, symlinks=False, ignore=None):
     if dst in ignored_names:
         return
 
-    os.makedirs(dst)
+    if os.path.isdir(dst):
+        if logger:
+            logger.info('%r already exists and will not be created!' % dst)
+    else:
+        os.makedirs(dst)
+
     errors = []
     for name in names:
         srcname = os.path.join(src, name)

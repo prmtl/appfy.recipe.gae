@@ -1,5 +1,12 @@
 Versions
 ========
+Version 0.5.2 - May 27, 2010
+----------------------------
+- Single files are correctly installed.
+- Namespaced packages are put in the same directory structure. This was causing
+  an error when trying to create a directory for the second time.
+
+
 Version 0.5.1 - May 17, 2010
 ----------------------------
 - appfy.recipe.gae:app_lib now extends zc.recipe.egg.Scripts, so that scripts

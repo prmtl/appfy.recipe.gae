@@ -143,9 +143,17 @@ class Recipe(zc.recipe.egg.Scripts):
 
         # Copy all files.
         for name, src in paths:
-            self.logger.info('Copying %r...' % name)
             dst = os.path.join(tmp_dir, name)
-            copytree(src, dst, ignore=ignore_patterns(*self.ignore))
+            if os.path.isdir(src):
+                self.logger.info('Copying %r...' % src)
+                copytree(src, dst, ignore=ignore_patterns(*self.ignore),
+                    logger=self.logger)
+            else:
+                src += '.py'
+                dst += '.py'
+                if os.path.isfile(src):
+                    self.logger.info('Copying %r...' % src)
+                    shutil.copy(src, dst)
 
         # Save README.
         f = open(os.path.join(tmp_dir, 'README.txt'), 'w')
