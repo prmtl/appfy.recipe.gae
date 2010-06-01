@@ -62,7 +62,6 @@ import uuid
 
 import zc.recipe.egg
 
-
 from appfy.recipe import (copytree, ignore_patterns, include_patterns,
     rmfiles, zipdir)
 
@@ -151,7 +150,7 @@ class Recipe(zc.recipe.egg.Scripts):
             else:
                 src += '.py'
                 dst += '.py'
-                if os.path.isfile(src):
+                if os.path.isfile(src) and not os.path.isfile(dst):
                     self.logger.info('Copying %r...' % src)
                     shutil.copy(src, dst)
 
@@ -169,7 +168,7 @@ class Recipe(zc.recipe.egg.Scripts):
     def install_in_parts_dir(self, paths):
         """Still unsupported.
 
-        This option triggers this:
+        This is triggered by the option:
 
         copy-to-app = false
 
@@ -181,15 +180,18 @@ class Recipe(zc.recipe.egg.Scripts):
         for name, src in paths:
             dst = os.path.join(self.lib_path, name)
             self.logger.info('Copying %r...' % name)
-            copytree(src, dst, ignore=ignore_patterns(*self.ignore))
+            copytree(src, dst, ignore=ignore_patterns(*self.ignore),
+                logger=self.logger)
 
     def get_package_paths(self, ws):
         """Returns the list of package paths to be copied."""
         pkgs = []
+
         for path in ws.entries:
-            egg_path = os.path.join(path, 'EGG-INFO')
-            if not os.path.isdir(egg_path):
-                raise IOError('Missing EGG-INFO directory %r.' % egg_path)
+            egg_path = self.get_egg_info_path(path)
+            if egg_path is None:
+                raise IOError('Missing egg info directory for entry %r.' %
+                    path)
 
             top_path = os.path.join(egg_path, 'top_level.txt')
             if not os.path.isfile(top_path):
@@ -202,6 +204,19 @@ class Recipe(zc.recipe.egg.Scripts):
             pkgs.append((lib, os.path.join(path, lib)))
 
         return pkgs
+
+    def get_egg_info_path(self, path):
+        """Returns the 'EGG-INFO' or '.egg-info' directory."""
+        egg_path = os.path.join(path, 'EGG-INFO')
+        if os.path.isdir(egg_path):
+            return egg_path
+
+        files = os.listdir(path)
+        for filename in files:
+            # Develop eggs.
+            if filename.endswith('.egg-info'):
+                egg_path = os.path.join(path, filename)
+                return egg_path
 
     def delete_libs(self):
         """If the `delete-safe` option is set to true, move the old libraries

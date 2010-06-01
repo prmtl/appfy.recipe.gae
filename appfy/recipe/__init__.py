@@ -89,9 +89,14 @@ def copytree(src, dst, symlinks=False, ignore=None, logger=None):
                 linkto = os.readlink(srcname)
                 os.symlink(linkto, dstname)
             elif os.path.isdir(srcname):
-                copytree(srcname, dstname, symlinks, ignore)
+                copytree(srcname, dstname, symlinks, ignore, logger=logger)
             else:
-                shutil.copy2(srcname, dstname)
+                if os.path.isfile(dstname):
+                    if logger:
+                        logger.info('%r already exists and will not be '
+                            'created!' % dstname)
+                else:
+                    shutil.copy2(srcname, dstname)
             # XXX What about devices, sockets etc.?
         except (IOError, os.error), why:
             errors.append((srcname, dstname, str(why)))

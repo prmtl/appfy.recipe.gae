@@ -17,6 +17,9 @@ split in different recipes. Currently `appfy.recipe.gae` has 3 recipes:
 
 Source code and issue tracker can be found at `http://code.google.com/p/appfy/ <http://code.google.com/p/appfy/>`_.
 
+For an example of how appfy makes distribution of App Engine apps easy and
+nice, see `Moe installation instructions <http://www.tipfy.org/wiki/moe/>`_.
+
 
 appfy.recipe.gae:app_lib
 ------------------------

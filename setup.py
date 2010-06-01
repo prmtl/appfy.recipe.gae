@@ -17,6 +17,9 @@ split in different recipes. Currently `appfy.recipe.gae` has 3 recipes:
     to start the dev_appserver.
 
 Source code and issue tracker can be found at `http://code.google.com/p/appfy/ <http://code.google.com/p/appfy/>`_.
+
+For an example of how appfy makes distribution of App Engine apps easy and
+nice, see `Moe installation instructions <http://www.tipfy.org/wiki/moe/>`_.
 """
 import os
 from setuptools import setup, find_packages
@@ -39,7 +42,7 @@ def get_readme():
 
 setup(
     name='appfy.recipe.gae',
-    version='0.5.2',
+    version='0.6',
     author='Rodrigo Moraes',
     author_email='rodrigo.moraes@gmail.com',
     description='Buildout recipes for App Engine development.',
