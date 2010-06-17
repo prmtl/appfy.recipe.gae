@@ -1,5 +1,11 @@
 Versions
 ========
+Version 0.6.2 - June 17, 2010
+-----------------------------
+- Added multi-line top_level support. Now it can handle eggs with multiple
+  lines in top_level.txt. Thanks to Benjamin Kampmann for this (Issue #3).
+
+
 Version 0.6.1 - June 3, 2010
 ----------------------------
 - Don't install package if egg info is not found, instead of breaking. This

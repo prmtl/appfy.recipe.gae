@@ -193,7 +193,7 @@ class Recipe(zc.recipe.egg.Scripts):
             return self.get_top_level_libs(egg_path)
 
         if os.path.isfile(path):
-            # Zipped egg?
+            # Zipped egg? Should we try to unpack it?
             # unpack_archive(path, self.eggs_dir)
             return
 
