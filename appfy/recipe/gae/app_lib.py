@@ -162,33 +162,35 @@ class Recipe(zc.recipe.egg.Scripts):
         """Returns the list of package paths to be copied."""
         pkgs = []
         for path in ws.entries:
-            lib_path = self.get_lib_path(path)
-            if lib_path is None:
+            lib_paths = self.get_lib_paths(path)
+            if not lib_paths:
                 self.logger.info('Library not installed: missing egg info for '
                     '%r.' % path)
                 continue
 
-            pkgs.append((lib_path, os.path.join(path, lib_path)))
+            for lib_path in lib_paths:
+                pkgs.append((lib_path, os.path.join(path, lib_path)))
 
         return pkgs
 
-    def get_top_level_lib(self, egg_path):
+    def get_top_level_libs(self, egg_path):
         top_path = os.path.join(egg_path, 'top_level.txt')
         if not os.path.isfile(top_path):
             raise IOError('Missing top_level.txt file %r.' % top_path)
 
         f = open(top_path, 'r')
-        lib = f.read().strip()
+        libs = f.read().strip()
         f.close()
 
-        return lib
+        # One lib per line.
+        return [l.strip() for l in libs.splitlines() if l.strip()]
 
-    def get_lib_path(self, path):
+    def get_lib_paths(self, path):
         """Returns the 'EGG-INFO' or '.egg-info' directory."""
         egg_path = os.path.join(path, 'EGG-INFO')
         if os.path.isdir(egg_path):
             # Unzipped egg metadata.
-            return self.get_top_level_lib(egg_path)
+            return self.get_top_level_libs(egg_path)
 
         if os.path.isfile(path):
             # Zipped egg?
@@ -201,7 +203,7 @@ class Recipe(zc.recipe.egg.Scripts):
             for filename in files:
                 if filename.endswith('.egg-info'):
                     egg_path = os.path.join(path, filename)
-                    return self.get_top_level_lib(egg_path)
+                    return self.get_top_level_libs(egg_path)
 
     def delete_libs(self):
         """If the `delete-safe` option is set to true, move the old libraries
