@@ -64,6 +64,7 @@ import zc.recipe.egg
 
 from appfy.recipe import (copytree, ignore_patterns, include_patterns,
     rmfiles, zipdir)
+#from appfy.recipe.archive_util import unpack_archive
 
 
 BASE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
@@ -87,6 +88,7 @@ class Recipe(zc.recipe.egg.Scripts):
         # Unzip eggs by default or we can't use some.
         opts.setdefault('unzip', 'true')
 
+        self.eggs_dir = buildout['buildout']['eggs-directory']
         self.parts_dir = buildout['buildout']['parts-directory']
         self.temp_dir = os.path.join(self.parts_dir, 'temp')
 
@@ -101,15 +103,7 @@ class Recipe(zc.recipe.egg.Scripts):
         self.ignore = [i for i in opts.get('ignore-globs', '') \
             .split('\n') if i.strip()]
 
-        self.copy_to_app = opts.get('copy-to-app', 'true') == 'true'
-        if self.copy_to_app:
-            self.delete_safe = opts.get('delete-safe', 'true') != 'false'
-        else:
-            # Still unsupported.
-            self.delete_safe = False
-            self.app_lib_dir = self.lib_path
-            self.lib_path = os.path.join(self.parts_dir, lib_dir)
-
+        self.delete_safe = opts.get('delete-safe', 'true') != 'false'
         opts.setdefault('eggs', '')
         super(Recipe, self).__init__(buildout, name, opts)
 
@@ -118,10 +112,9 @@ class Recipe(zc.recipe.egg.Scripts):
         reqs, ws = self.working_set()
         paths = self.get_package_paths(ws)
 
-        if self.copy_to_app:
-            self.install_in_app_dir(paths)
-        else:
-            self.install_in_parts_dir(paths)
+        # For now we only support installing them in the app dir.
+        # In the future we may support installing libraries in the parts dir.
+        self.install_in_app_dir(paths)
 
         return super(Recipe, self).install()
 
@@ -165,58 +158,50 @@ class Recipe(zc.recipe.egg.Scripts):
             if os.path.isdir(tmp_dir):
                 shutil.rmtree(tmp_dir)
 
-    def install_in_parts_dir(self, paths):
-        """Still unsupported.
-
-        This is triggered by the option:
-
-        copy-to-app = false
-
-        The idea is to move the libs to the app only during deployment.
-        """
-        return
-        self.delete_libs()
-        os.mkdir(self.lib_path)
-        for name, src in paths:
-            dst = os.path.join(self.lib_path, name)
-            self.logger.info('Copying %r...' % name)
-            copytree(src, dst, ignore=ignore_patterns(*self.ignore),
-                logger=self.logger)
-
     def get_package_paths(self, ws):
         """Returns the list of package paths to be copied."""
         pkgs = []
-
         for path in ws.entries:
-            egg_path = self.get_egg_info_path(path)
-            if egg_path is None:
-                raise IOError('Missing egg info directory for entry %r.' %
-                    path)
+            lib_path = self.get_lib_path(path)
+            if lib_path is None:
+                self.logger.info('Library not installed: missing egg info for '
+                    '%r.' % path)
+                continue
 
-            top_path = os.path.join(egg_path, 'top_level.txt')
-            if not os.path.isfile(top_path):
-                raise IOError('Missing top_level.txt file %r.' % top_path)
-
-            f = open(top_path, 'r')
-            lib = f.read().strip()
-            f.close()
-
-            pkgs.append((lib, os.path.join(path, lib)))
+            pkgs.append((lib_path, os.path.join(path, lib_path)))
 
         return pkgs
 
-    def get_egg_info_path(self, path):
+    def get_top_level_lib(self, egg_path):
+        top_path = os.path.join(egg_path, 'top_level.txt')
+        if not os.path.isfile(top_path):
+            raise IOError('Missing top_level.txt file %r.' % top_path)
+
+        f = open(top_path, 'r')
+        lib = f.read().strip()
+        f.close()
+
+        return lib
+
+    def get_lib_path(self, path):
         """Returns the 'EGG-INFO' or '.egg-info' directory."""
         egg_path = os.path.join(path, 'EGG-INFO')
         if os.path.isdir(egg_path):
-            return egg_path
+            # Unzipped egg metadata.
+            return self.get_top_level_lib(egg_path)
 
-        files = os.listdir(path)
-        for filename in files:
-            # Develop eggs.
-            if filename.endswith('.egg-info'):
-                egg_path = os.path.join(path, filename)
-                return egg_path
+        if os.path.isfile(path):
+            # Zipped egg?
+            # unpack_archive(path, self.eggs_dir)
+            return
+
+        # Last try: develop eggs.
+        elif os.path.isdir(path):
+            files = os.listdir(path)
+            for filename in files:
+                if filename.endswith('.egg-info'):
+                    egg_path = os.path.join(path, filename)
+                    return self.get_top_level_lib(egg_path)
 
     def delete_libs(self):
         """If the `delete-safe` option is set to true, move the old libraries

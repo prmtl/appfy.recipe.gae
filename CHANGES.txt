@@ -1,5 +1,11 @@
 Versions
 ========
+Version 0.6.1 - June 3, 2010
+----------------------------
+- Don't install package if egg info is not found, instead of breaking. This
+  was causing a problem when setuptools is declared as dependency.
+
+
 Version 0.6 - June 1, 2010
 --------------------------
 - app_lib can now also install develop eggs.
