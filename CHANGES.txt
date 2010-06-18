@@ -1,5 +1,10 @@
 Versions
 ========
+Version 0.7.2 - June 18, 2010
+-----------------------------
+- os.makedirs(), not os.mkdirs(). Ooops.
+
+
 Version 0.7.1 - June 18, 2010
 -----------------------------
 - Minor enhancement: use os.mkdirs() instead of os.mkdir() when creating the
