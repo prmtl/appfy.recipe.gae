@@ -37,6 +37,10 @@ Options
     instead of a directory. The zip filename will be the value of
     `lib-directory` plus `.zip`.
 :ignore-globs: A list of glob patterns to not be copied from the library.
+:ignore-packages: A list of top-level package names or modules to be ignored.
+    This is useful to ignore dependencies that won't be used. Some packages may
+    install distribute, setuptools or pkg_resources but these are not very
+    useful on App Engine, so you can set them to be ignored, for example.
 :delete-safe: If `true`, always move `lib-directory` to a temporary directory
     inside the parts dir as a backup when building, instead of deleting it.
     This is to avoid accidental deletion if `lib-directory` is badly
@@ -73,6 +77,14 @@ Example
       */testsuite
       */django
       */sqlalchemy
+
+  # Don't install these packages or modules.
+  ignore-packages =
+      distribute
+      setuptools
+      easy_install
+      site
+      pkg_resources
 
 
 appfy.recipe.gae:sdk
@@ -134,6 +146,7 @@ Options
     installed in the bin directory. Default is `remote_api_shell`.
 :config-file: Configuration file with the default values to use in
     scripts. Default is `gaetools.cfg`.
+:extra-paths: Extra paths to include in sys.path for generated scripts.
 
 Example
 ~~~~~~~
@@ -145,6 +158,10 @@ Example
   recipe = appfy.recipe.gae:tools
   sdk-directory = ${gae_sdk:destination}/google_appengine
 
+  # Add these paths to sys.path in the generated scripts.
+  extra-paths =
+      app/lib
+      app/distlib
 
 Note that this example references an `gae_sdk` section from the
 `appfy.recipe.gae:sdk` example. An absolute path could also be used.
