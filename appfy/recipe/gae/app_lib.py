@@ -237,7 +237,7 @@ class Recipe(zc.recipe.egg.Scripts):
         if self.delete_safe is True:
             # Move directory or zip to temporary backup directory.
             if not os.path.exists(self.temp_dir):
-                os.mkdir(self.temp_dir)
+                os.mkdirs(self.temp_dir)
 
             date = datetime.datetime.now().strftime('_%Y_%m_%d_%H_%M_%S')
             filename = os.path.basename(self.lib_path.rstrip(os.sep))
