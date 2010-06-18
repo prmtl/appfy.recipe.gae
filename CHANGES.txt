@@ -1,7 +1,13 @@
 Versions
 ========
-Version 0.7 - June 17, 2010
+Version 0.7.1 - June 18, 2010
 -----------------------------
+- Minor enhancement: use os.mkdirs() instead of os.mkdir() when creating the
+  backup for app_libs (Tom Lynn).
+
+
+Version 0.7 - June 17, 2010
+---------------------------
 - Added multi-line top_level support. Now it can handle eggs with multiple
   lines in top_level.txt. Thanks to Benjamin Kampmann for this (Issue #3).
 
