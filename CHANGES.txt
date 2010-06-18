@@ -1,9 +1,21 @@
 Versions
 ========
-Version 0.6.2 - June 17, 2010
+Version 0.7 - June 17, 2010
 -----------------------------
 - Added multi-line top_level support. Now it can handle eggs with multiple
   lines in top_level.txt. Thanks to Benjamin Kampmann for this (Issue #3).
+
+- Added ignore-packages option, useful to ignore setuptools, distribute and
+  other dependency packages not useful on App Engine.
+
+- Single modules are now also matched by ignore-globs.
+
+- ignore-globs now removes the non-related path prefix for better matching.
+
+- Documented extra-paths, useful to add libraries directories to sys.path in
+  scripts.
+
+- Several refactorings and cleanups.
 
 
 Version 0.6.1 - June 3, 2010

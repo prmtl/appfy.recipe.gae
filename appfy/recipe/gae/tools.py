@@ -30,6 +30,7 @@ Options
     installed in the bin directory. Default is `remote_api_shell`.
 :config-file: Configuration file with the default values to use in
     scripts. Default is `gaetools.cfg`.
+:extra-paths: Extra paths to include in sys.path for generated scripts.
 
 Example
 ~~~~~~~
@@ -41,6 +42,10 @@ Example
   recipe = appfy.recipe.gae:tools
   sdk-directory = ${gae_sdk:destination}/google_appengine
 
+  # Add these paths to sys.path in the generated scripts.
+  extra-paths =
+      app/lib
+      app/distlib
 
 Note that this example references an `gae_sdk` section from the
 `appfy.recipe.gae:sdk` example. An absolute path could also be used.

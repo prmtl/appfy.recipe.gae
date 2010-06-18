@@ -32,7 +32,7 @@ def get_relative_path(path, base_path):
     return 'join(base, %r)' % os.path.join(*r)
 
 
-def copytree(src, dst, symlinks=False, ignore=None, logger=None):
+def copytree(src, dst, dirname, symlinks=False, ignore=None, logger=None):
     """Recursively copy a directory tree using copy2().
 
     The destination directory must not already exist.
@@ -59,22 +59,25 @@ def copytree(src, dst, symlinks=False, ignore=None, logger=None):
 
     Adapted from Python 2.6 source.
     """
+    ignored_names = set()
+
     if os.path.isfile(src):
-        shutil.copyfile(src, dst)
+        if ignore is not None:
+            ignored_names = ignore(os.path.dirname(src)[len(dirname):],
+                [os.path.basename(src)])
+
+        if src[len(dirname):] not in ignored_names:
+            shutil.copyfile(src, dst)
+
         return
 
     names = os.listdir(src)
     if ignore is not None:
-        ignored_names = ignore(src, names)
-    else:
-        ignored_names = set()
-
-    if dst in ignored_names:
-        return
+        ignored_names = ignore(src[len(dirname):], names)
 
     if os.path.isdir(dst):
         if logger:
-            logger.info('%r already exists and will not be created!' % dst)
+            logger.info('%r already exists and will not be created.' % dst)
     else:
         os.makedirs(dst)
 
@@ -82,19 +85,20 @@ def copytree(src, dst, symlinks=False, ignore=None, logger=None):
     for name in names:
         srcname = os.path.join(src, name)
         dstname = os.path.join(dst, name)
-        if srcname in ignored_names:
+        if srcname[len(dirname):] in ignored_names:
             continue
         try:
             if symlinks and os.path.islink(srcname):
                 linkto = os.readlink(srcname)
                 os.symlink(linkto, dstname)
             elif os.path.isdir(srcname):
-                copytree(srcname, dstname, symlinks, ignore, logger=logger)
+                copytree(srcname, dstname, dirname, symlinks, ignore,
+                    logger=logger)
             else:
                 if os.path.isfile(dstname):
                     if logger:
                         logger.info('%r already exists and will not be '
-                            'created!' % dstname)
+                            'created.' % dstname)
                 else:
                     shutil.copy2(srcname, dstname)
             # XXX What about devices, sockets etc.?

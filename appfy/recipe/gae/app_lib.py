@@ -16,6 +16,10 @@ Options
     instead of a directory. The zip filename will be the value of
     `lib-directory` plus `.zip`.
 :ignore-globs: A list of glob patterns to not be copied from the library.
+:ignore-packages: A list of top-level package names or modules to be ignored.
+    This is useful to ignore dependencies that won't be used. Some packages may
+    install distribute, setuptools or pkg_resources but these are not very
+    useful on App Engine, so you can set them to be ignored, for example.
 :delete-safe: If `true`, always move `lib-directory` to a temporary directory
     inside the parts dir as a backup when building, instead of deleting it.
     This is to avoid accidental deletion if `lib-directory` is badly
@@ -52,6 +56,14 @@ Example
       */testsuite
       */django
       */sqlalchemy
+
+  # Don't install these packages or modules.
+  ignore-packages =
+      distribute
+      setuptools
+      easy_install
+      site
+      pkg_resources
 """
 import datetime
 import logging
@@ -99,9 +111,11 @@ class Recipe(zc.recipe.egg.Scripts):
         if self.use_zip:
             self.lib_path += '.zip'
 
-        # Set list of patterns to be ignored.
-        self.ignore = [i for i in opts.get('ignore-globs', '') \
-            .split('\n') if i.strip()]
+        # Set list of globs and packages to be ignored.
+        self.ignore_globs = [i for i in opts.get('ignore-globs', '') \
+            .splitlines() if i.strip()]
+        self.ignore_packages = [i for i in opts.get('ignore-packages', '') \
+            .splitlines() if i.strip()]
 
         self.delete_safe = opts.get('delete-safe', 'true') != 'false'
         opts.setdefault('eggs', '')
@@ -135,17 +149,23 @@ class Recipe(zc.recipe.egg.Scripts):
 
         # Copy all files.
         for name, src in paths:
+            if name in self.ignore_packages:
+                # This package or module must be ignored.
+                continue
+
             dst = os.path.join(tmp_dir, name)
-            if os.path.isdir(src):
-                self.logger.info('Copying %r...' % src)
-                copytree(src, dst, ignore=ignore_patterns(*self.ignore),
-                    logger=self.logger)
-            else:
+            if not os.path.isdir(src):
+                # Try single files listed as modules.
                 src += '.py'
                 dst += '.py'
-                if os.path.isfile(src) and not os.path.isfile(dst):
-                    self.logger.info('Copying %r...' % src)
-                    shutil.copy(src, dst)
+                if not os.path.isfile(src) or os.path.isfile(dst):
+                    continue
+
+            self.logger.info('Copying %r...' % src)
+
+            copytree(src, dst, os.path.dirname(src) + os.sep,
+                ignore=ignore_patterns(*self.ignore_globs),
+                logger=self.logger)
 
         # Save README.
         f = open(os.path.join(tmp_dir, 'README.txt'), 'w')
