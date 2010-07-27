@@ -196,7 +196,7 @@ class Recipe(zc.recipe.egg.Scripts):
     def get_top_level_libs(self, egg_path):
         top_path = os.path.join(egg_path, 'top_level.txt')
         if not os.path.isfile(top_path):
-            raise IOError('Missing top_level.txt file %r.' % top_path)
+            return None
 
         f = open(top_path, 'r')
         libs = f.read().strip()
