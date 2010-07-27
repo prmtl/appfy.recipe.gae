@@ -1,5 +1,11 @@
 Versions
 ========
+Version 0.8 - July 27, 2010
+---------------------------
+- Do not raise IOError when egg info is not found, and let installation
+  proceed only emitting a warning.
+
+
 Version 0.7.2 - June 18, 2010
 -----------------------------
 - os.makedirs(), not os.mkdirs(). Ooops.

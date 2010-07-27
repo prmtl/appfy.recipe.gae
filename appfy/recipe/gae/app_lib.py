@@ -38,12 +38,6 @@ Example
 
   # Define the libraries.
   eggs =
-      babel
-      jinja2
-      wtforms
-      werkzeug
-      gaepytz
-      gaema
       tipfy
 
   # Don't copy files that match these glob patterns.
@@ -215,7 +209,7 @@ class Recipe(zc.recipe.egg.Scripts):
         if os.path.isfile(path):
             # Zipped egg? Should we try to unpack it?
             # unpack_archive(path, self.eggs_dir)
-            return
+            return None
 
         # Last try: develop eggs.
         elif os.path.isdir(path):

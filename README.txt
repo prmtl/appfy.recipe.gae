@@ -59,12 +59,6 @@ Example
 
   # Define the libraries.
   eggs =
-      babel
-      jinja2
-      wtforms
-      werkzeug
-      gaepytz
-      gaema
       tipfy
 
   # Don't copy files that match these glob patterns.
@@ -110,7 +104,7 @@ Example
   [gae_sdk]
   # Dowloads and extracts the App Engine SDK.
   recipe = appfy.recipe.gae:sdk
-  url = http://googleappengine.googlecode.com/files/google_appengine_1.3.3.zip
+  url = http://googleappengine.googlecode.com/files/google_appengine_1.3.5.zip
   destination = ${buildout:parts-directory}
   hash-name = false
   clear-destination = true

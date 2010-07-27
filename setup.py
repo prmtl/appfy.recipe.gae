@@ -42,7 +42,7 @@ def get_readme():
 
 setup(
     name='appfy.recipe.gae',
-    version='0.7.2',
+    version='0.8',
     author='Rodrigo Moraes',
     author_email='rodrigo.moraes@gmail.com',
     description='Buildout recipes for App Engine development.',
@@ -68,7 +68,7 @@ setup(
         'appfy tipfy',
     url='http://code.google.com/p/appfy/',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Framework :: Buildout',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
