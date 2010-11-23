@@ -1,5 +1,15 @@
 Versions
 ========
+Version 0.9 - November 23, 2010
+-------------------------------
+- Scripts now extends z3c.recipe.scripts.scripts.Scripts, for better
+  compatibility with buildout 1.5.2.
+- appfy.recipe.gae.sdk accepts a sha1sum option, to check the SDK checksum as
+  provided by Google.
+- removed hexagonit.recipe.download as it was not flexible enough to allow
+  the sha1 checksum check.
+
+
 Version 0.8 - July 27, 2010
 ---------------------------
 - Do not raise IOError when egg info is not found, and let installation

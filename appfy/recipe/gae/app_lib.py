@@ -66,7 +66,8 @@ import shutil
 import tempfile
 import uuid
 
-import zc.recipe.egg
+#import zc.recipe.egg
+from z3c.recipe.scripts.scripts import Scripts
 
 from appfy.recipe import (copytree, ignore_patterns, include_patterns,
     rmfiles, zipdir)
@@ -86,7 +87,7 @@ or edit things here because any changes will be lost!
 Use a different directory for extra libraries instead of this one."""
 
 
-class Recipe(zc.recipe.egg.Scripts):
+class Recipe(Scripts):
     def __init__(self, buildout, name, opts):
         # Set a logger with the section name.
         self.logger = logging.getLogger(name)

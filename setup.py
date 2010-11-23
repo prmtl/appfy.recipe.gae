@@ -42,7 +42,7 @@ def get_readme():
 
 setup(
     name='appfy.recipe.gae',
-    version='0.8',
+    version='0.9',
     author='Rodrigo Moraes',
     author_email='rodrigo.moraes@gmail.com',
     description='Buildout recipes for App Engine development.',
@@ -52,8 +52,7 @@ setup(
     install_requires=[
         'setuptools',
         'zc.buildout >= 1.4.3',
-        'zc.recipe.egg >= 1.2.2',
-        'hexagonit.recipe.download >= 1.4.1',
+        'z3c.recipe.scripts',
     ],
     entry_points={
         'zc.buildout': [

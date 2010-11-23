@@ -3,17 +3,13 @@
 appfy.recipe.gae:sdk
 --------------------
 
-Downloads and installs the App Engine SDK in the buildout directory. This
-recipe extends `hexagonit.recipe.download <http://pypi.python.org/pypi/hexagonit.recipe.download>`_
-so all the download options from that recipe are also valid.
+Downloads and installs the App Engine SDK in the buildout directory.
 
 Options
 ~~~~~~~
 
-:destination: Destination of the extracted SDK download. Default is
-    `${buildout:parts-directory}/google_appengine`.
-:clear-destination: If `true`, deletes the destination dir before
-    extracting the download. Default is `false`.
+:url: URL to the App Engine SDK file.
+:destination: Destination of the extracted SDK. Default is the parts directory.
 
 Example
 ~~~~~~~
@@ -28,32 +24,13 @@ Example
   hash-name = false
   clear-destination = true
 """
-import logging
 import os
-import shutil
 
-import hexagonit.recipe.download
+from appfy.recipe.download import Recipe as DownloadRecipe
 
 
-class Recipe(hexagonit.recipe.download.Recipe):
+class Recipe(DownloadRecipe):
     def __init__(self, buildout, name, options):
-        # Set a logger with the section name.
-        self.logger = logging.getLogger(name)
-
-        parts_dir = buildout['buildout']['parts-directory']
-
-        # Set options.
-        self.destination = os.path.abspath(options.get('destination',
-            os.path.join(parts_dir, 'google_appengine')))
-        self.clear = options.get('clear-destination', 'false') == 'true'
-
+        parts_dir = os.path.abspath(buildout['buildout']['parts-directory'])
+        options.setdefault('destination', parts_dir)
         super(Recipe, self).__init__(buildout, name, options)
-
-    def install(self):
-        if self.clear and os.path.isdir(self.destination):
-            shutil.rmtree(self.destination)
-            self.logger.info('Removed App Engine SDK %r.' % self.destination)
-
-        return super(Recipe, self).install()
-
-    update = install
