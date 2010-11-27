@@ -10,6 +10,8 @@ Options
 
 :url: URL to the App Engine SDK file.
 :destination: Destination of the extracted SDK. Default is the parts directory.
+:clear-destination: If `true`, deletes the destination dir before
+    extracting the download. Default is `true`.
 
 Example
 ~~~~~~~
@@ -33,4 +35,5 @@ class Recipe(DownloadRecipe):
     def __init__(self, buildout, name, options):
         parts_dir = os.path.abspath(buildout['buildout']['parts-directory'])
         options.setdefault('destination', parts_dir)
+        options.setdefault('clear-destination', 'true')
         super(Recipe, self).__init__(buildout, name, options)

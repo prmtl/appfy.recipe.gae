@@ -84,17 +84,15 @@ Example
 appfy.recipe.gae:sdk
 --------------------
 
-Downloads and installs the App Engine SDK in the buildout directory. This
-recipe extends `hexagonit.recipe.download <http://pypi.python.org/pypi/hexagonit.recipe.download>`_
-so all the download options from that recipe are also valid.
+Downloads and installs the App Engine SDK in the buildout directory.
 
 Options
 ~~~~~~~
 
-:destination: Destination of the extracted SDK download. Default is
-    `${buildout:parts-directory}/google_appengine`.
+:url: URL to the App Engine SDK file.
+:destination: Destination of the extracted SDK. Default is the parts directory.
 :clear-destination: If `true`, deletes the destination dir before
-    extracting the download. Default is `false`.
+    extracting the download. Default is `true`.
 
 Example
 ~~~~~~~

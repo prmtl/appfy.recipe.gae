@@ -1,5 +1,12 @@
 Versions
 ========
+Version 0.9.1 - November 27, 2010
+---------------------------------
+- Readded option 'clear-destination' to the dowanlod recipe, true by default.
+  It was causing an error when the files existed, and 'ignore-existing' wasn't
+  avoiding it.
+
+
 Version 0.9 - November 23, 2010
 -------------------------------
 - Scripts now extends z3c.recipe.scripts.scripts.Scripts, for better
