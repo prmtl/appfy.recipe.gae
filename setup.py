@@ -51,7 +51,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'setuptools',
-        'zc.buildout >= 1.5.2',
+        'zc.buildout >= 1.5.2, < 2.0',
         'z3c.recipe.scripts >= 1.0.1'
     ],
     entry_points={
