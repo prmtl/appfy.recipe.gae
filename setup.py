@@ -28,7 +28,7 @@ from setuptools import setup, find_packages
 def get_readme():
     base = os.path.abspath(os.path.realpath(os.path.dirname(__file__)))
     files = [
-        os.path.join(base, 'README.txt'),
+        os.path.join(base, 'README.rst'),
         os.path.join(base, 'CHANGES.txt'),
     ]
     content = []
