@@ -40,6 +40,11 @@ def get_readme():
     return '\n\n\n'.join(content)
 
 
+tests_require = (
+    'nose'
+)
+
+
 setup(
     name='appfy.recipe.gae',
     version='0.9.4',
@@ -51,7 +56,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'setuptools',
-        'zc.buildout >= 1.5.2',
+        'zc.buildout >= 1.5.2, < 2.0',
         'z3c.recipe.scripts >= 1.0.1'
     ],
     entry_points={
@@ -74,4 +79,9 @@ setup(
         'Topic :: Software Development :: Build Tools',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
+    tests_require=tests_require,
+    extras_require={
+        'test': tests_require,
+    },
+    test_suite='nose.collector',
 )
