@@ -16,7 +16,7 @@ split in different recipes. Currently `appfy.recipe.gae` has 3 recipes:
     dev_appserver and remote_api_shell. It also allows to set default values
     to start the dev_appserver.
 
-Source code and issue tracker can be found at `http://code.google.com/p/appfy/ <http://code.google.com/p/appfy/>`_.
+Source code and issue tracker can be found at `https://github.com/prmtl/appfy.recipe.gae <https://github.com/prmtl/appfy.recipe.gae>`_.
 
 For an example of how appfy makes distribution of App Engine apps easy and
 nice, see `Moe installation instructions <http://www.tipfy.org/wiki/moe/>`_.
@@ -28,7 +28,7 @@ from setuptools import setup, find_packages
 def get_readme():
     base = os.path.abspath(os.path.realpath(os.path.dirname(__file__)))
     files = [
-        os.path.join(base, 'README.txt'),
+        os.path.join(base, 'README.rst'),
         os.path.join(base, 'CHANGES.txt'),
     ]
     content = []
@@ -70,7 +70,7 @@ setup(
     zip_safe=False,
     keywords='buildout recipe google app engine appengine gae zc.buildout '
         'appfy tipfy',
-    url='http://code.google.com/p/appfy/',
+    url='https://github.com/prmtl/appfy.recipe.gae',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Framework :: Buildout',
