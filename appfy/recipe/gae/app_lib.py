@@ -66,8 +66,7 @@ import shutil
 import tempfile
 import uuid
 
-#import zc.recipe.egg
-from z3c.recipe.scripts.scripts import Scripts
+from zc.recipe.egg import Scripts
 
 from appfy.recipe import (copytree, ignore_patterns, include_patterns,
     rmfiles, zipdir)
