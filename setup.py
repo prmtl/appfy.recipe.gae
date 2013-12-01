@@ -50,6 +50,8 @@ setup(
     version='0.9.4',
     author='Rodrigo Moraes',
     author_email='rodrigo.moraes@gmail.com',
+    maintainer='Sebastian Kalinowski',
+    maintainer_email='sebastian@kalinowski.eu',
     description='Buildout recipes for App Engine development.',
     long_description=get_readme(),
     license='Apache Software License',

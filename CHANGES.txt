@@ -1,8 +1,10 @@
 Versions
 ========
 
-Version 0.9.4 - unreleased
+Version 0.9.4 - December 01, 2013
 ---------------------------------
+- Moved package to Github
+- Moved from z3c.recipe.egg to zc.recipe.egg
 
 
 Version 0.9.3 - December 03, 2010
