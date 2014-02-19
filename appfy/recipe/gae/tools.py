@@ -134,6 +134,9 @@ class Recipe(zc.recipe.egg.Scripts):
         initialization.append('gae = %s' % self.get_path(self.sdk_dir))
         initialization.append('cfg = %s' % self.get_path(self.config_file))
 
+        if 'initialization' in self.options:
+            initialization.append(self.options['initialization'])
+
         self.options.update({
             'entry-points':   ' '.join(entry_points),
             'initialization': '\n'.join(initialization),
