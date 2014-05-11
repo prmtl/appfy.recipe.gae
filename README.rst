@@ -142,6 +142,8 @@ Options
 :config-file: Configuration file with the default values to use in
     scripts. Default is `gaetools.cfg`.
 :extra-paths: Extra paths to include in sys.path for generated scripts.
+:initialization: Allows to specify some Python code to be included in
+    the scripts.
 
 Example
 ~~~~~~~
@@ -152,7 +154,10 @@ Example
   # Installs appcfg, dev_appserver and python executables in the bin directory.
   recipe = appfy.recipe.gae:tools
   sdk-directory = ${gae_sdk:destination}/google_appengine
-
+  # add extra code
+  initialization =
+    import dev_appserver
+    dev_appserver.fix_sys_path()
   # Add these paths to sys.path in the generated scripts.
   extra-paths =
       app/lib
