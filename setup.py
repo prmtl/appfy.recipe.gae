@@ -47,7 +47,7 @@ tests_require = (
 
 setup(
     name='appfy.recipe.gae',
-    version='0.9.6',
+    version='0.9.7',
     author='Rodrigo Moraes',
     author_email='rodrigo.moraes@gmail.com',
     maintainer='Sebastian Kalinowski',
