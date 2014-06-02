@@ -69,7 +69,6 @@ default). For example::
 Each option should be set in a separate line, as displayed above. Options
 provided when calling dev_appserver will override the default values.
 """
-import logging
 import os
 
 import zc.recipe.egg
@@ -103,11 +102,14 @@ class Recipe(zc.recipe.egg.Scripts):
         self.sdk_dir = os.path.abspath(opts['sdk-directory'])
 
         # Set the scripts to be generated.
-        scripts = ['appcfg',
-                   'bulkload_client',
-                   'bulkloader',
-                   'dev_appserver',
-                   'remote_api_shell']
+        scripts = [
+            'appcfg',
+            'bulkload_client',
+            'bulkloader',
+            'dev_appserver',
+            'remote_api_shell',
+            'endpointscfg',
+        ]
 
         self.scripts = [(s, opts.get(s + '-script', s)) for s in scripts]
 

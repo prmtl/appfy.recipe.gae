@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import ConfigParser
-import os
 import runpy
 import sys
 
@@ -121,3 +120,7 @@ def dev_appserver(base, gae_path, config_file):
 
 def remote_api_shell(base, gae_path, config_file):
     runpy.run_module('remote_api_shell', run_name='__main__', alter_sys=True)
+
+
+def endpointscfg(base, gae_path, config_file):
+    runpy.run_module('endpointscfg', run_name='__main__', alter_sys=True)

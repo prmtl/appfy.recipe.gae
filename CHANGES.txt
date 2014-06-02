@@ -3,6 +3,7 @@ Versions
 
 Version 0.9.6 - UNRELEASED
 ---------------------------------
+- Added endpointscfg script needed to work with Google Cloud Endpoints
 
 
 Version 0.9.5 - May 11, 2014
