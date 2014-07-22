@@ -59,13 +59,13 @@ def get_dev_appserver_argv(defaults):
 
     app = None
     if sys_args:
-        app = sys_args[0]
+        app = sys_args
     elif def_args:
-        app = def_args[0]
+        app = def_args
 
     res = [sys.argv[0]] + merge_opts(sys_opts, def_opts)
     if app:
-        res.append(app)
+        res += app
 
     return res
 
