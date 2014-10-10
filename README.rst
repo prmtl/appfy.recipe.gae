@@ -92,7 +92,8 @@ Downloads and installs the App Engine SDK in the buildout directory.
 Options
 ~~~~~~~
 
-:url: URL to the App Engine SDK file.
+:url: URL to the App Engine SDK file. Default is to download the latest version
+    from storage.googleapis.com.
 :destination: Destination of the extracted SDK. Default is the parts directory.
 :clear-destination: If `true`, deletes the destination dir before
     extracting the download. Default is `true`.
