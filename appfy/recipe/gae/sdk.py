@@ -36,6 +36,15 @@ import re
 from appfy.recipe.download import Recipe as DownloadRecipe
 
 
+class HeadRequest(urllib2.Request):
+    def get_method(self):
+        return "HEAD"
+
+
+class SDKCouldNotBeFound(Exception):
+    pass
+
+
 class Recipe(DownloadRecipe):
     def __init__(self, buildout, name, options):
         parts_dir = os.path.abspath(buildout['buildout']['parts-directory'])
@@ -47,7 +56,7 @@ class Recipe(DownloadRecipe):
         if self.option_url is None:
             self.option_url = self.find_latest_sdk_url()
             self.logger.info('Using latest GAE SDK from "{}"'.format(self.option_url))
-        super(Recipe, self).install()
+        return super(Recipe, self).install()
 
     def find_latest_sdk_url(self):
         base = 'https://storage.googleapis.com/appengine-sdks/'
@@ -59,6 +68,21 @@ class Recipe(DownloadRecipe):
         candidates = ((el, featured_re.match(el.text)) for el in keys)
         candidates = ((el, match.group(1)) for el, match in candidates if not match is None)
         candidates = ((el, version.StrictVersion(version_str)) for el, version_str in candidates)
-        latest = sorted(candidates, key=lambda tup: tup[1])[-1]
-        return ''.join([base, latest[0].text])
 
+        # Sort latest to oldest by version number
+        candidates = sorted(candidates, key=lambda tup: tup[1], reverse=True)
+        urls = (''.join([base, el.text]) for el, version in candidates)
+
+        # Newest listed versions are not immediately available to download. Check over HEAD.
+        for url in urls:
+            try:
+                request = HeadRequest(url)
+                urllib2.urlopen(request)
+            except urllib2.HTTPError as e:
+                if e.code == 403:
+                    pass  # Not yet public.
+                else:
+                    raise
+            else:
+                return url
+        raise SDKCouldNotBeFound('Could not find a usable SDK version automatically')
