@@ -29,7 +29,7 @@ Example
 """
 import os
 import urllib2
-import xml.etree.ElementTree as et
+import json
 import distutils.version as version
 import re
 
@@ -46,6 +46,11 @@ class SDKCouldNotBeFound(Exception):
 
 
 class Recipe(DownloadRecipe):
+
+    # Eg. featured/google_appengine_1.9.14.zip
+    PYTHON_SDK_RE = re.compile(r'featured/google_appengine_(\d+\.\d+\.\d+).zip')
+    URL = "https://www.googleapis.com/storage/v1/b/appengine-sdks/o?prefix=featured"
+
     def __init__(self, buildout, name, options):
         parts_dir = os.path.abspath(buildout['buildout']['parts-directory'])
         options.setdefault('destination', parts_dir)
@@ -59,29 +64,29 @@ class Recipe(DownloadRecipe):
         return super(Recipe, self).install()
 
     def find_latest_sdk_url(self):
-        base = 'https://storage.googleapis.com/appengine-sdks/'
-        ns = '{http://doc.s3.amazonaws.com/2006-03-01}'
-        featured_re = re.compile(r'featured/google_appengine_(\d+\.\d+\.\d+).zip')
 
-        tree = et.parse(urllib2.urlopen(base))
-        keys = (contents.find(ns + 'Key') for contents in tree.getroot().findall(ns + 'Contents'))
-        candidates = ((el, featured_re.match(el.text)) for el in keys)
-        candidates = ((el, match.group(1)) for el, match in candidates if not match is None)
-        candidates = ((el, version.StrictVersion(version_str)) for el, version_str in candidates)
+        def version_key(sdk):
+            version_string = self.PYTHON_SDK_RE.match(sdk['name']).group(1)
+            return version.StrictVersion(version_string)
 
-        # Sort latest to oldest by version number
-        candidates = sorted(candidates, key=lambda tup: tup[1], reverse=True)
-        urls = (''.join([base, el.text]) for el, version in candidates)
+        raw_bucket_list = urllib2.urlopen(self.URL).read()
+        bucket_list = json.loads(raw_bucket_list)
+
+        all_sdks = bucket_list['items']
+        python_sdks = [sdk for sdk in all_sdks if self.PYTHON_SDK_RE.match(sdk['name'])]
+
+        # 1.9.14 > 1.9.13 so we need reverse order
+        python_sdks.sort(key=version_key, reverse=True)
 
         # Newest listed versions are not immediately available to download. Check over HEAD.
-        for url in urls:
+        for sdk in python_sdks:
+            url = sdk['mediaLink']
             try:
                 request = HeadRequest(url)
                 urllib2.urlopen(request)
             except urllib2.HTTPError as e:
-                if e.code == 403:
-                    pass  # Not yet public.
-                else:
+                # 403 - not yet published, try next one
+                if e.code != 403:
                     raise
             else:
                 return url
