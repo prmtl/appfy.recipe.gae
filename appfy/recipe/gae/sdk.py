@@ -27,6 +27,7 @@ Example
   hash-name = false
   clear-destination = true
 """
+import logging
 import os
 import urllib2
 import json
@@ -55,16 +56,14 @@ class Recipe(DownloadRecipe):
         parts_dir = os.path.abspath(buildout['buildout']['parts-directory'])
         options.setdefault('destination', parts_dir)
         options.setdefault('clear-destination', 'true')
+
+        if options.get('url') is None:
+            options['url'] = self.find_latest_sdk_url()
+            logging.getLogger(name).info('Using SDK version found at {}'.format(options['url']))
+
         super(Recipe, self).__init__(buildout, name, options)
 
-    def install(self):
-        if self.option_url is None:
-            self.option_url = self.find_latest_sdk_url()
-            self.logger.info('Using latest GAE SDK from "{}"'.format(self.option_url))
-        return super(Recipe, self).install()
-
     def find_latest_sdk_url(self):
-
         def version_key(sdk):
             version_string = self.PYTHON_SDK_RE.match(sdk['name']).group(1)
             return version.StrictVersion(version_string)
@@ -80,7 +79,7 @@ class Recipe(DownloadRecipe):
 
         # Newest listed versions are not immediately available to download. Check over HEAD.
         for sdk in python_sdks:
-            url = sdk['mediaLink']
+            url = str(sdk['mediaLink'])
             try:
                 request = HeadRequest(url)
                 urllib2.urlopen(request)
