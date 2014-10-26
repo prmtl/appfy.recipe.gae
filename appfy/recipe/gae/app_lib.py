@@ -66,12 +66,9 @@ import shutil
 import tempfile
 import uuid
 
-from zc.recipe.egg import Scripts
+from zc.recipe import egg
 
-from appfy.recipe import (copytree, ignore_patterns, include_patterns,
-    rmfiles, zipdir)
-#from appfy.recipe.archive_util import unpack_archive
-
+from appfy import recipe
 
 BASE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(os.path.realpath(__file__))))))
@@ -86,7 +83,7 @@ or edit things here because any changes will be lost!
 Use a different directory for extra libraries instead of this one."""
 
 
-class Recipe(Scripts):
+class Recipe(egg.Scripts):
     def __init__(self, buildout, name, opts):
         # Set a logger with the section name.
         self.logger = logging.getLogger(name)
@@ -106,10 +103,13 @@ class Recipe(Scripts):
             self.lib_path += '.zip'
 
         # Set list of globs and packages to be ignored.
-        self.ignore_globs = [i for i in opts.get('ignore-globs', '') \
-            .splitlines() if i.strip()]
-        self.ignore_packages = [i for i in opts.get('ignore-packages', '') \
-            .splitlines() if i.strip()]
+        self.ignore_globs = [
+            i for i in opts.get('ignore-globs', '').splitlines() if i.strip()
+        ]
+        self.ignore_packages = [
+            i for i in opts.get('ignore-packages', '').splitlines()
+            if i.strip()
+        ]
 
         self.delete_safe = opts.get('delete-safe', 'true') != 'false'
         opts.setdefault('eggs', '')
@@ -157,9 +157,14 @@ class Recipe(Scripts):
 
             self.logger.info('Copying %r...' % src)
 
-            copytree(src, dst, os.path.dirname(src) + os.sep,
-                ignore=ignore_patterns(*self.ignore_globs),
-                logger=self.logger)
+            to_ignore = recipe.ignore_patterns(*self.ignore_globs)
+            recipe.copytree(
+                src,
+                dst,
+                os.path.dirname(src) + os.sep,
+                ignore=to_ignore,
+                logger=self.logger
+            )
 
         # Save README.
         f = open(os.path.join(tmp_dir, 'README.txt'), 'w')
@@ -168,7 +173,7 @@ class Recipe(Scripts):
 
         if self.use_zip:
             # Zip file and remove temporary dir.
-            zipdir(tmp_dir, self.lib_path)
+            recipe.zipdir(tmp_dir, self.lib_path)
             if os.path.isdir(tmp_dir):
                 shutil.rmtree(tmp_dir)
 
@@ -178,8 +183,10 @@ class Recipe(Scripts):
         for path in ws.entries:
             lib_paths = self.get_lib_paths(path)
             if not lib_paths:
-                self.logger.info('Library not installed: missing egg info for '
-                    '%r.' % path)
+                self.logger.info(
+                    'Library not installed: missing egg info for %r.',
+                    path
+                )
                 continue
 
             for lib_path in lib_paths:
@@ -220,7 +227,9 @@ class Recipe(Scripts):
                     return self.get_top_level_libs(egg_path)
 
     def delete_libs(self):
-        """If the `delete-safe` option is set to true, move the old libraries
+        """Removes old libraries
+
+        If the `delete-safe` option is set to true, move the old libraries
         directory to a temporary directory inside the parts dir instead of
         deleting it.
         """

@@ -9,7 +9,8 @@ remote_api_shell.
 
 It also allows to set default values to start the dev_appserver.
 
-This recipe extends `zc.recipe.egg.Scripts <http://pypi.python.org/pypi/zc.recipe.egg>`_,
+This recipe extends
+`zc.recipe.egg.Scripts <http://pypi.python.org/pypi/zc.recipe.egg>`_,
 so all the options from that recipe are also valid.
 
 Options
@@ -78,7 +79,7 @@ import os
 
 import zc.recipe.egg
 
-from appfy.recipe import get_relative_path
+from appfy import recipe
 
 
 BASE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
@@ -122,15 +123,19 @@ class Recipe(zc.recipe.egg.Scripts):
         opts['extra-paths'] += '\n%s\n%s' % (BASE, self.sdk_dir)
 
         # Set a flag to use relative paths.
-        self.use_rel_paths = opts.get('relative-paths',
-            buildout['buildout'].get('relative-paths', 'false')) == 'true'
+        self.use_rel_paths = opts.get(
+            'relative-paths',
+            buildout['buildout'].get('relative-paths', 'false')
+        ) == 'true'
 
         super(Recipe, self).__init__(buildout, name, opts)
 
     def install(self):
         """Creates the scripts."""
-        entry_points =['%s=appfy.recipe.gae.scripts:%s' % (scriptname,
-            function) for function, scriptname in self.scripts]
+        entry_points = [
+            '%s=appfy.recipe.gae.scripts:%s' % (scriptname, function)
+            for function, scriptname in self.scripts
+        ]
 
         if self.use_rel_paths is not True:
             # base won't be set if we are using absolute paths.
@@ -154,8 +159,9 @@ class Recipe(zc.recipe.egg.Scripts):
 
     def get_path(self, path):
         if self.use_rel_paths is True:
-            return get_relative_path(path, self.buildout['buildout']
-                ['directory'])
+            return recipe.get_relative_path(
+                path, self.buildout['buildout']['directory']
+            )
         else:
             return '%r' % os.path.abspath(path)
 

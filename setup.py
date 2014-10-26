@@ -5,9 +5,11 @@ appfy.recipe.gae
 .. image:: https://travis-ci.org/prmtl/appfy.recipe.gae.png?branch=master
    :target: https://travis-ci.org/prmtl/appfy.recipe.gae
 
-`appfy.recipe.gae` provides a series of `zc.buildout <http://pypi.python.org/pypi/zc.buildout>`_
+`appfy.recipe.gae` provides a series of
+`zc.buildout <http://pypi.python.org/pypi/zc.buildout>`_
 recipes to help with `Google App Engine <http://code.google.com/appengine/>`_
-development. It is inspired by `rod.recipe.appengine <http://pypi.python.org/pypi/rod.recipe.appengine>`_,
+development. It is inspired by
+`rod.recipe.appengine <http://pypi.python.org/pypi/rod.recipe.appengine>`_,
 but using a different layout and with extended functionalities. It is also
 split in different recipes. Currently `appfy.recipe.gae` has 3 recipes:
 
@@ -19,13 +21,16 @@ split in different recipes. Currently `appfy.recipe.gae` has 3 recipes:
     dev_appserver and remote_api_shell. It also allows to set default values
     to start the dev_appserver.
 
-Source code and issue tracker can be found at `https://github.com/prmtl/appfy.recipe.gae <https://github.com/prmtl/appfy.recipe.gae>`_.
+Source code and issue tracker can be found at
+`https://github.com/prmtl/appfy.recipe.gae
+<https://github.com/prmtl/appfy.recipe.gae>`_.
 
 For an example of how appfy makes distribution of App Engine apps easy and
 nice, see `Moe installation instructions <http://www.tipfy.org/wiki/moe/>`_.
 """
 import os
-from setuptools import setup, find_packages
+
+import setuptools
 
 
 def get_readme():
@@ -44,11 +49,12 @@ def get_readme():
 
 
 tests_require = (
-    'nose'
+    'hacking',
+    'nose',
 )
 
 
-setup(
+setuptools.setup(
     name='appfy.recipe.gae',
     version='0.9.8',
     author='Rodrigo Moraes',
@@ -58,7 +64,7 @@ setup(
     description='Buildout recipes for App Engine development.',
     long_description=get_readme(),
     license='Apache Software License',
-    packages=find_packages(),
+    packages=setuptools.find_packages(),
     install_requires=[
         'setuptools',
         'zc.buildout',
@@ -73,8 +79,8 @@ setup(
         ],
     },
     zip_safe=False,
-    keywords='buildout recipe google app engine appengine gae zc.buildout '
-        'appfy tipfy',
+    keywords=('buildout recipe google app engine appengine gae zc.buildout '
+              'appfy tipfy'),
     url='https://github.com/prmtl/appfy.recipe.gae',
     classifiers=[
         'Development Status :: 4 - Beta',

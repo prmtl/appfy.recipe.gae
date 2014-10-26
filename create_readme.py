@@ -1,14 +1,14 @@
 import os
 
-join   = os.path.join
-BASE   = os.path.abspath(os.path.realpath(os.path.dirname(__file__)))
-GAE    = join(BASE, 'appfy', 'recipe', 'gae')
-README = join(BASE, 'README.rst')
-FILES  = [
-    join(BASE, 'setup.py'),
-    join(GAE, 'app_lib.py'),
-    join(GAE, 'sdk.py'),
-    join(GAE, 'tools.py'),
+
+BASE = os.path.abspath(os.path.realpath(os.path.dirname(__file__)))
+GAE = os.path.join(BASE, 'appfy', 'recipe', 'gae')
+README = os.path.join(BASE, 'README.rst')
+FILES = [
+    os.path.join(BASE, 'setup.py'),
+    os.path.join(GAE, 'app_lib.py'),
+    os.path.join(GAE, 'sdk.py'),
+    os.path.join(GAE, 'tools.py'),
 ]
 
 

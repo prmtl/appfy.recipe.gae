@@ -27,14 +27,14 @@ Example
   hash-name = false
   clear-destination = true
 """
+from distutils import version
+import json
 import logging
 import os
-import urllib2
-import json
-import distutils.version as version
 import re
+import urllib2
 
-from appfy.recipe.download import Recipe as DownloadRecipe
+from appfy.recipe import download
 
 
 class HeadRequest(urllib2.Request):
@@ -46,20 +46,26 @@ class SDKCouldNotBeFound(Exception):
     pass
 
 
-class Recipe(DownloadRecipe):
+class Recipe(download.Recipe):
 
     # Eg. featured/google_appengine_1.9.14.zip
-    PYTHON_SDK_RE = re.compile(r'featured/google_appengine_(\d+\.\d+\.\d+).zip')
-    URL = "https://www.googleapis.com/storage/v1/b/appengine-sdks/o?prefix=featured"
+    PYTHON_SDK_RE = re.compile(
+        r'featured/google_appengine_(\d+\.\d+\.\d+).zip'
+    )
+    URL = ("https://www.googleapis.com/storage/"
+           "v1/b/appengine-sdks/o?prefix=featured")
 
     def __init__(self, buildout, name, options):
+        self.logger = logging.getLogger(name)
+
         parts_dir = os.path.abspath(buildout['buildout']['parts-directory'])
         options.setdefault('destination', parts_dir)
         options.setdefault('clear-destination', 'true')
 
         if options.get('url') is None:
             options['url'] = self.find_latest_sdk_url()
-            logging.getLogger(name).info('Using SDK version found at {}'.format(options['url']))
+
+        self.logger.info('Using SDK version found at %s', options['url'])
 
         super(Recipe, self).__init__(buildout, name, options)
 
@@ -72,12 +78,15 @@ class Recipe(DownloadRecipe):
         bucket_list = json.loads(raw_bucket_list)
 
         all_sdks = bucket_list['items']
-        python_sdks = [sdk for sdk in all_sdks if self.PYTHON_SDK_RE.match(sdk['name'])]
+        python_sdks = [
+            sdk for sdk in all_sdks if self.PYTHON_SDK_RE.match(sdk['name'])
+        ]
 
         # 1.9.14 > 1.9.13 so we need reverse order
         python_sdks.sort(key=version_key, reverse=True)
 
-        # Newest listed versions are not immediately available to download. Check over HEAD.
+        # Newest listed versions are not immediately available to download.
+        # Check over HEAD.
         for sdk in python_sdks:
             url = str(sdk['mediaLink'])
             try:
@@ -89,4 +98,6 @@ class Recipe(DownloadRecipe):
                     raise
             else:
                 return url
-        raise SDKCouldNotBeFound('Could not find a usable SDK version automatically')
+        raise SDKCouldNotBeFound(
+            'Could not find a usable SDK version automatically'
+        )
