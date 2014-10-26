@@ -42,7 +42,7 @@ class Recipe(object):
             options.setdefault('clear-destination', 'false'))
         self.option_strip_top_level_dir = utils.get_bool_option(
             options.setdefault('strip-top-level-dir', 'false'))
-        self.option_download_only = utils.sget_bool_option(
+        self.option_download_only = utils.get_bool_option(
             options.setdefault('download-only', 'false'))
         self.option_hash_name = utils.get_bool_option(
             options.setdefault('hash-name', 'false'))
