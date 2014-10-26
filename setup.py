@@ -2,6 +2,9 @@
 appfy.recipe.gae
 ================
 
+.. image:: https://travis-ci.org/prmtl/appfy.recipe.gae.png?branch=master
+   :target: https://travis-ci.org/prmtl/appfy.recipe.gae
+
 `appfy.recipe.gae` provides a series of `zc.buildout <http://pypi.python.org/pypi/zc.buildout>`_
 recipes to help with `Google App Engine <http://code.google.com/appengine/>`_
 development. It is inspired by `rod.recipe.appengine <http://pypi.python.org/pypi/rod.recipe.appengine>`_,

@@ -3,7 +3,7 @@ import os
 join   = os.path.join
 BASE   = os.path.abspath(os.path.realpath(os.path.dirname(__file__)))
 GAE    = join(BASE, 'appfy', 'recipe', 'gae')
-README = join(BASE, 'README.txt')
+README = join(BASE, 'README.rst')
 FILES  = [
     join(BASE, 'setup.py'),
     join(GAE, 'app_lib.py'),
