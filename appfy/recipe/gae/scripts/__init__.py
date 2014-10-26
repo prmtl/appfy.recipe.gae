@@ -5,7 +5,9 @@ import sys
 
 
 def parse_argv(argv):
-    """A very simple argv parser. Returns a list of (opts, args) for options
+    """A very simple argv parser.
+
+    Returns a list of (opts, args) for options
     and arguments in the passed argv. It won't try to validate anything.
     """
     opts = []
@@ -26,8 +28,9 @@ def parse_argv(argv):
 
 
 def merge_opts(sys_opts, def_opts):
-    """Merges options from sys.argv to default options: the first overrides
-    the later.
+    """Merges options from sys.argv to default options.
+
+    Options from sys.argv overrides default ones
     """
     res = []
     defined_opts = dict(def_opts)

@@ -63,8 +63,8 @@ def copytree(src, dst, dirname, symlinks=False, ignore=None, logger=None):
 
     if os.path.isfile(src):
         if ignore is not None:
-            ignored_names = ignore(os.path.dirname(src)[len(dirname):],
-                [os.path.basename(src)])
+            ignored_names = ignore(
+                os.path.dirname(src)[len(dirname):], [os.path.basename(src)])
 
         if src[len(dirname):] not in ignored_names:
             shutil.copyfile(src, dst)
@@ -92,25 +92,26 @@ def copytree(src, dst, dirname, symlinks=False, ignore=None, logger=None):
                 linkto = os.readlink(srcname)
                 os.symlink(linkto, dstname)
             elif os.path.isdir(srcname):
-                copytree(srcname, dstname, dirname, symlinks, ignore,
-                    logger=logger)
+                copytree(
+                    srcname, dstname, dirname, symlinks, ignore, logger=logger)
             else:
                 if os.path.isfile(dstname):
                     if logger:
-                        logger.info('%r already exists and will not be '
-                            'created.' % dstname)
+                        logger.info(
+                            '%r already exists and will not be created.',
+                            dstname)
                 else:
                     shutil.copy2(srcname, dstname)
             # XXX What about devices, sockets etc.?
-        except (IOError, os.error), why:
+        except (IOError, os.error) as why:
             errors.append((srcname, dstname, str(why)))
         # catch the Error from the recursive copytree so that we can
         # continue with other files
-        except shutil.Error, err:
+        except shutil.Error as err:
             errors.extend(err.args[0])
     try:
         shutil.copystat(src, dst)
-    except OSError, why:
+    except OSError as why:
         if WindowsError is not None and isinstance(why, WindowsError):
             # Copying file access times may fail on Windows
             pass

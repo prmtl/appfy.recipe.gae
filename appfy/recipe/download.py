@@ -5,18 +5,18 @@ import shutil
 import tempfile
 import urlparse
 
-import zc.buildout
-from zc.buildout.download import ChecksumError, Download
-
 import setuptools.archive_util
+import zc.buildout
+from zc.buildout import download as zc_download
 
-from appfy.recipe.utils import get_bool_option, get_checksum
+from appfy.recipe import utils
 
 
 class Recipe(object):
-    """Recipe for downloading packages from the net and extracting them on
-    the filesystem.
+    """Downloads and extract packages on file system
+
     """
+
     def __init__(self, buildout, name, options):
         self.options = options
         self.buildout = buildout
@@ -25,22 +25,26 @@ class Recipe(object):
         # Set a logger with the section name.
         self.logger = logging.getLogger(name)
 
-        self.download_cache = buildout['buildout'].setdefault('download-cache',
-            os.path.join(buildout['buildout']['directory'], 'downloads'))
+        default_download_cache = os.path.join(
+            buildout['buildout']['directory'], 'downloads')
+        self.download_cache = buildout['buildout'].setdefault(
+            'download-cache', default_download_cache)
 
         # All options
         self.option_url = options.get('url')
         self.option_md5sum = options.get('md5sum')
         self.option_sha1sum = options.get('sha1sum')
-        self.option_destination = options.setdefault('destination',
-            os.path.join(buildout['buildout']['parts-directory'], self.name))
-        self.option_clear_destination = get_bool_option(
+        default_destinantion = os.path.join(
+            buildout['buildout']['parts-directory'], self.name)
+        self.option_destination = options.setdefault(
+            'destination', default_destinantion)
+        self.option_clear_destination = utils.get_bool_option(
             options.setdefault('clear-destination', 'false'))
-        self.option_strip_top_level_dir = get_bool_option(
+        self.option_strip_top_level_dir = utils.get_bool_option(
             options.setdefault('strip-top-level-dir', 'false'))
-        self.option_download_only = get_bool_option(
+        self.option_download_only = utils.sget_bool_option(
             options.setdefault('download-only', 'false'))
-        self.option_hash_name = get_bool_option(
+        self.option_hash_name = utils.get_bool_option(
             options.setdefault('hash-name', 'false'))
         self.option_filename = options.get('filename', '').strip()
 
@@ -65,23 +69,25 @@ class Recipe(object):
                 else:
                     # Use the original filename of the downloaded file
                     # regardless whether download filename hashing is enabled.
-                    # See http://github.com/hexagonit/hexagonit.recipe.download/issues#issue/2
-                    filename = os.path.basename(urlparse.urlparse(self.option_url)[2])
+                    # http://github.com/hexagonit/hexagonit.recipe.download/issues#issue/2
+                    filename = os.path.basename(
+                        urlparse.urlparse(self.option_url)[2])
 
                 # Copy the file to destination without extraction
                 target_path = os.path.join(self.option_destination, filename)
                 shutil.copy(cached_path, target_path)
-                if not self.option_destination in parts:
+                if self.option_destination not in parts:
                     parts.append(target_path)
             else:
                 # Extract the package
                 extract_dir = tempfile.mkdtemp("buildout-" + self.name)
                 try:
-                    setuptools.archive_util.unpack_archive(cached_path,
-                        extract_dir)
+                    setuptools.archive_util.unpack_archive(
+                        cached_path, extract_dir)
                 except setuptools.archive_util.UnrecognizedFormat:
-                    self.logger.error('Unable to extract the package %s. '
-                        'Unknown format.', cached_path)
+                    self.logger.error(
+                        'Unable to extract the package %s. Unknown format.',
+                        cached_path)
                     raise zc.buildout.UserError('Package extraction error')
 
                 base = self.calculate_base(extract_dir)
@@ -89,8 +95,8 @@ class Recipe(object):
                 if not os.path.isdir(self.option_destination):
                     os.makedirs(self.option_destination)
 
-                self.logger.info('Extracting package to %s' %
-                    self.option_destination)
+                self.logger.info(
+                    'Extracting package to %s', self.option_destination)
 
                 for filename in os.listdir(base):
                     dest = os.path.join(self.option_destination, filename)
@@ -106,8 +112,8 @@ class Recipe(object):
                                 'buildout.cfg to remove existing files and '
                                 'directories before moving downloaded files.',
                                 dest)
-                            raise zc.buildout.UserError('File or directory '
-                                'already exists.')
+                            raise zc.buildout.UserError(
+                                'File or directory already exists.')
                     else:
                         # Only add the file/directory to the list of installed
                         # parts if it does not already exist. This way it does
@@ -129,7 +135,8 @@ class Recipe(object):
         pass
 
     def calculate_base(self, extract_dir):
-        """
+        """Get base directory
+
         recipe authors inheriting from this recipe can override this method
         to set a different base directory.
         """
@@ -137,7 +144,8 @@ class Recipe(object):
         top_level_contents = os.listdir(extract_dir)
         if self.option_strip_top_level_dir:
             if len(top_level_contents) != 1:
-                self.logger.error('Unable to strip top level directory '
+                self.logger.error(
+                    'Unable to strip top level directory '
                     'because there are more than one element in the root '
                     'of the package.')
                 raise zc.buildout.UserError('Invalid package contents')
@@ -149,13 +157,15 @@ class Recipe(object):
         return base
 
     def download(self):
-        d = Download(self.buildout['buildout'],
+        d = zc_download.Download(
+            self.buildout['buildout'],
             hash_name=self.option_hash_name)
         cached_path, is_temp = d(self.option_url, md5sum=self.option_md5sum)
 
-        if self.option_sha1sum and \
-            self.option_sha1sum != get_checksum(cached_path):
-            raise ChecksumError('SHA1 checksum mismatch for cached download '
+        if (self.option_sha1sum and
+           self.option_sha1sum != utils.get_checksum(cached_path)):
+            raise zc_download.ChecksumError(
+                'SHA1 checksum mismatch for cached download '
                 'from %r at %r' % (self.option_url, cached_path))
 
         return cached_path, is_temp
