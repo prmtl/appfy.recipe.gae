@@ -2,8 +2,11 @@ Versions
 ========
 
 
-Version 0.9.8 - UNRELEASED
+Version 0.9.8 - October 26, 2014
 ---------------------------------
+- Fetch the latest SDK version if 'url' is not specified
+  (Oliver Brook)
+- PEP8 and code style checks added
 
 
 Version 0.9.7 - July 22, 2014
