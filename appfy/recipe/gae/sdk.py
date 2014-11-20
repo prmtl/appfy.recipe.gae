@@ -93,8 +93,8 @@ class Recipe(download.Recipe):
                 request = HeadRequest(url)
                 urllib2.urlopen(request)
             except urllib2.HTTPError as e:
-                # 403 - not yet published, try next one
-                if e.code != 403:
+                # 403, 401 - not yet published, try next one
+                if e.code not in (401, 403):
                     raise
             else:
                 return url

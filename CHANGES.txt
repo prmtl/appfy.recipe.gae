@@ -2,8 +2,9 @@ Versions
 ========
 
 
-Version 0.9.9 - UNRELEASED
+Version 0.9.9 - November 20, 2014
 ---------------------------------
+- Fix problem with 401 error code when fetching latest SDK
 
 
 Version 0.9.8 - October 26, 2014
