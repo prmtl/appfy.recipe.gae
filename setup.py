@@ -51,6 +51,7 @@ def get_readme():
 tests_require = (
     'hacking',
     'nose',
+    'unittest2',
 )
 
 
