@@ -1,17 +1,18 @@
 import json
 import urllib2
 
-from unittest2 import TestCase
 import mock
+import unittest2
 
 from appfy.recipe.gae import sdk
 
 
-class BaseTestCase(TestCase):
+class BaseTestCase(unittest2.TestCase):
 
     @classmethod
     def get_buildout(cls, custom_config=None):
-        """ Returns instance of zc.buildout.buildout.Buildout
+        """Returns a fake instance of zc.buildout.buildout.Buildout
+
         """
         config = {
             'buildout': {
@@ -66,7 +67,7 @@ class BaseTestCase(TestCase):
             #     'recipe': 'appfy.recipe.gae:app_lib',
             #     'develop-eggs-directory': '/project-dir/develop-eggs',
             #     'lib-directory': 'src/lib',
-            #     'use-zipimport': 'false', 
+            #     'use-zipimport': 'false',
             #     '_e': 'gae_buildout_example/eggs',
             #     '_d': 'gae_buildout_example/develop-eggs',
             #     '_b': 'gae_buildout_example/bin',
@@ -229,4 +230,3 @@ class TestSdkRecipe(BaseTestCase):
 
             with self.assertRaises(urllib2.HTTPError):
                 sdk.Recipe.is_sdk_avaiable('some-url')
-
