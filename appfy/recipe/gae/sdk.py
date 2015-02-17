@@ -62,12 +62,13 @@ class Recipe(download.Recipe):
         options.setdefault('destination', parts_dir)
         options.setdefault('clear-destination', 'true')
 
-        if options.get('url') is None:
-            options['url'] = self.find_latest_sdk_url()
-
-        self.logger.info('Using SDK version found at %s', options['url'])
-
         super(Recipe, self).__init__(buildout, name, options)
+
+    def install(self):
+        if not self.option_url:
+            self.option_url = self.find_latest_sdk_url()
+        self.logger.info('Using SDK version found at %s', self.option_url)
+        return super(Recipe, self).install()
 
     def find_latest_sdk_url(self):
         def version_key(sdk):
