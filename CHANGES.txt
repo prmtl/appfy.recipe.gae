@@ -1,6 +1,11 @@
 Versions
 ========
 
+Version 0.9.10 - February 21, 2015
+----------------------------------
+- Wait to check for an empty sdk url until install time
+  (Joshua Johnston)
+
 
 Version 0.9.9 - November 20, 2014
 ---------------------------------
@@ -26,7 +31,7 @@ Version 0.9.6 - June 02, 2014
 
 Version 0.9.5 - May 11, 2014
 ---------------------------------
-- Append any initialization options to the generated initialization output 
+- Append any initialization options to the generated initialization output
   (Josh Johnston)
 
 
