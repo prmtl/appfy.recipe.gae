@@ -157,7 +157,7 @@ class Recipe(egg.Scripts):
 
             self.logger.info('Copying %r...' % src)
 
-            to_ignore = recipe.ignore_patterns(*self.ignore_globs)
+            to_ignore = shutil.ignore_patterns(*self.ignore_globs)
             shutil.copytree(
                 src,
                 dst,

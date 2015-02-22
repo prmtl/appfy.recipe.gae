@@ -5,7 +5,6 @@ appfy.recipe
 
 General utilities shared by all recipes.
 """
-import fnmatch
 import os
 import shutil
 import zipfile
@@ -30,27 +29,6 @@ def get_relative_path(path, base_path):
 
     r.reverse()
     return 'join(base, %r)' % os.path.join(*r)
-
-
-def ignore_patterns(*patterns):
-    """Function that can be used as copytree() ignore parameter.
-
-    Patterns is a sequence of glob-style patterns
-    that are used to exclude files
-
-    Adapted from Python 2.6 source.
-    """
-    def _ignore_patterns(path, names):
-        names = [os.path.join(path, name) for name in names]
-        ignored_names = []
-        for pattern in patterns:
-            ignored_names.extend(fnmatch.filter(names, pattern))
-
-        return set(ignored_names)
-    return _ignore_patterns
-
-
-include_patterns = ignore_patterns
 
 
 def rmfiles(src, only=None):
