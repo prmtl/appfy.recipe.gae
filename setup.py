@@ -56,7 +56,7 @@ tests_require = (
 
 setuptools.setup(
     name='appfy.recipe.gae',
-    version='0.9.10',
+    version='0.9.11.dev0',
     author='Rodrigo Moraes',
     author_email='rodrigo.moraes@gmail.com',
     maintainer='Sebastian Kalinowski',
