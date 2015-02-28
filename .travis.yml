@@ -1,4 +1,6 @@
 language: python
+# use docker infra
+sudo: false
 install:
   - pip install tox
 script:
